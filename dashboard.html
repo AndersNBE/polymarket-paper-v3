@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Polymarket Paper Trader · V3</title>
+<meta http-equiv="refresh" content="60">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --surface: #11161d;
+    --surface-2: #161b22;
+    --border: #21262d;
+    --border-strong: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --text-mute: #6e7681;
+    --green: #3fb950;
+    --green-dim: rgba(63, 185, 80, 0.15);
+    --red: #f85149;
+    --red-dim: rgba(248, 81, 73, 0.15);
+    --amber: #d29922;
+    --blue: #58a6ff;
+    --blue-dim: rgba(88, 166, 255, 0.15);
+    --purple: #a371f7;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .mono { font-family: "SF Mono", "Menlo", "Monaco", "Roboto Mono", "JetBrains Mono", monospace; font-feature-settings: "tnum" 1; }
+  .num { text-align: right; }
+  .center { text-align: center; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  /* Header */
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; }
+  .logo-text h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .logo-text .sub { font-size: 11px; color: var(--text-mute); margin-top: 1px; }
+  .live-pill { display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #3fb950; box-shadow: 0 0 0 0 #3fb950; animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 #3fb95066; }
+    70% { box-shadow: 0 0 0 8px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); }
+  .hero-cell { background: var(--surface); padding: 22px 24px; }
+  .hero-label { font-size: 11px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-weight: 500; }
+  .hero-value { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .hero-sub { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+  .hero-cell-primary { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); }
+
+  /* Verdict banner */
+  .verdict { display: flex; align-items: center; gap: 16px; padding: 18px 22px; background: var(--surface); border: 1px solid #d2992233; border-left: 4px solid #d29922; border-radius: 10px; margin-bottom: 24px; }
+  .verdict-icon { width: 38px; height: 38px; border-radius: 10px; background: #d299221a; display: flex; align-items: center; justify-content: center; color: #d29922; font-size: 20px; }
+  .verdict-content { flex: 1; }
+  .verdict-label { font-weight: 600; color: #d29922; font-size: 15px; }
+  .verdict-sub { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .card-title { font-size: 12px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
+  .card-title-row { display: flex; align-items: center; gap: 8px; }
+  .chip { display: inline-block; padding: 2px 8px; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: 999px; font-size: 10px; color: var(--text-dim); }
+
+  /* Grid layouts */
+  .row-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .row-1-1 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .row-1-1-1 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-mute); text-transform: uppercase; font-size: 10px; letter-spacing: 0.08em; font-weight: 500; background: transparent; }
+  td { color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface-2); }
+  .empty-state { padding: 32px; text-align: center; color: var(--text-mute); font-size: 13px; background: var(--surface-2); border-radius: 10px; }
+  .empty-state-small { padding: 20px; text-align: center; color: var(--text-mute); font-size: 12px; }
+
+  /* Position cards */
+  .pos-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+  .pos-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .pos-question { font-size: 13px; color: var(--text); flex: 1; }
+  .pos-dir { font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 4px; background: var(--surface); letter-spacing: 0.05em; }
+  .pos-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .pos-stat { display: flex; flex-direction: column; }
+  .pos-stat-label { font-size: 10px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.05em; }
+  .pos-stat-val { font-size: 13px; font-weight: 500; font-family: "SF Mono", "Menlo", monospace; margin-top: 2px; }
+
+  /* Activity feed */
+  .activity-row { display: grid; grid-template-columns: 80px 24px 1fr; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-time { color: var(--text-mute); font-family: "SF Mono", "Menlo", monospace; font-size: 11px; }
+  .activity-icon { text-align: center; font-weight: bold; }
+  .activity-text { color: var(--text); }
+
+  /* Stat detail bar */
+  .stat-bar { display: flex; gap: 18px; font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+  .stat-bar strong { color: var(--text); }
+
+  /* Chart heights */
+  .chart-cell { position: relative; height: 240px; }
+  .chart-cell-large { position: relative; height: 320px; }
+  .chart-cell-small { position: relative; height: 180px; }
+
+  /* Footer */
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-mute); display: flex; justify-content: space-between; }
+
+  /* Sparkline */
+  .sparkline { height: 28px; margin-top: 8px; }
+
+  /* Insights strip */
+  .insights-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 14px; }
+  .insight-card { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; transition: border-color 0.2s, transform 0.2s; }
+  .insight-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .insight-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+  .insight-body { flex: 1; min-width: 0; }
+  .insight-label { font-size: 10px; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+  .insight-val { font-family: "SF Mono", "Menlo", monospace; font-size: 19px; font-weight: 600; margin-top: 2px; letter-spacing: -0.01em; }
+  .insight-suffix { font-size: 13px; color: var(--text-dim); font-weight: 400; }
+  .insight-sub { font-size: 11px; color: var(--text-mute); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Calendar */
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-cell { aspect-ratio: 1.4; border-radius: 6px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; font-family: "SF Mono", monospace; transition: transform 0.15s; cursor: default; }
+  .cal-cell:hover { transform: scale(1.05); z-index: 5; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .cal-day { font-size: 10px; opacity: 0.7; }
+  .cal-pnl { font-size: 11px; font-weight: 600; }
+  .legend-row { display: flex; gap: 16px; font-size: 11px; color: var(--text-mute); }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: middle; }
+
+  /* Smooth transitions */
+  .card, .hero-cell, .pos-card { transition: border-color 0.2s ease; }
+  .card:hover { border-color: var(--border-strong); }
+
+  /* Sparkline (inside hero cell) */
+  .sparkline { width: 100%; height: 30px; margin-top: 12px; opacity: 0.85; }
+
+  /* Trade tape */
+  .tape-row { display: flex; gap: 4px; flex-wrap: wrap; padding: 4px 0; }
+  .tape-dot { width: 22px; height: 22px; border-radius: 5px; cursor: default; transition: transform 0.15s; }
+  .tape-dot:hover { transform: scale(1.3); z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+
+  /* Time-of-day heatmap */
+  .hod-grid { display: grid; grid-template-columns: 36px repeat(24, 1fr); gap: 2px; margin-top: 6px; }
+  .hod-corner { }
+  .hod-hour-label { text-align: center; font-size: 9px; color: var(--text-mute); font-family: "SF Mono", monospace; padding: 2px 0; }
+  .hod-day-label { font-size: 10px; color: var(--text-mute); padding-right: 4px; padding-top: 4px; text-align: right; }
+  .hod-cell { aspect-ratio: 1; border-radius: 2px; cursor: default; transition: transform 0.15s; }
+  .hod-cell:hover { transform: scale(1.5); z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+
+  /* Animated numbers — initial fade in */
+  .animated-num { animation: fadeUp 0.6s ease-out; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 1100px) {
+    .insights-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr 1fr; }
+    .row-2-1, .row-1-1, .row-1-1-1 { grid-template-columns: 1fr; }
+    .pos-stats { grid-template-columns: repeat(2, 1fr); }
+    .insights-grid { grid-template-columns: 1fr 1fr; }
+    .calendar-grid { grid-template-columns: repeat(7, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark">P</div>
+      <div class="logo-text">
+        <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
+        <div class="sub">2026-05-12 19:07:20 UTC · Cycle #1 · Started 2026-05-12</div>
+      </div>
+    </div>
+    <div class="live-pill">
+      <span class="live-dot"></span>
+      <span style="color:#3fb950;font-weight:600">LIVE</span>
+      <span style="color:var(--text-mute)">·</span>
+      <span style="color:var(--text-dim)">0m ago</span>
+    </div>
+  </header>
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <div class="verdict-icon">⚠</div>
+    <div class="verdict-content">
+      <div class="verdict-label">INSUFFICIENT DATA</div>
+      <div class="verdict-sub">Need 5 more trades for first read</div>
+    </div>
+  </div>
+
+  <!-- HERO STRIP -->
+  <div class="hero">
+    <div class="hero-cell hero-cell-primary">
+      <div class="hero-label">Net PnL</div>
+      <div class="hero-value mono animated-num" data-target="0" data-prefix="$" data-prec="2" style="color:#7d8590">$+0.00</div>
+      <div class="hero-sub">0 trades · $0.00 fees paid · $$0.00 before fees</div>
+      <canvas class="sparkline" id="spark_equity"></canvas>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-label">Avg CLV ★</div>
+      <div class="hero-value mono" style="color:#7d8590">+0.00¢</div>
+      <div class="hero-sub">0 measured · 0% positive · target +0.5¢</div>
+      <canvas class="sparkline" id="spark_clv"></canvas>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-label">Win Rate</div>
+      <div class="hero-value mono">0.0<span style="font-size:18px;color:var(--text-dim)">%</span></div>
+      <div class="hero-sub">0/0 · expected ~50.0%</div>
+      <canvas class="sparkline" id="spark_winrate"></canvas>
+    </div>
+    <div class="hero-cell">
+      <div class="hero-label">Open Positions</div>
+      <div class="hero-value mono">1<span style="font-size:18px;color:var(--text-dim)">/10</span></div>
+      <div class="hero-sub">$32 deployed of $720</div>
+      <canvas class="sparkline" id="spark_pos"></canvas>
+    </div>
+  </div>
+
+  <!-- TRADE TAPE -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">
+      <div class="card-title-row">📼 Trade tape — last 30</div>
+      <span style="color:var(--text-mute);font-size:11px">hover for detail</span>
+    </div>
+    <div class="tape-row"><div class="empty-state-small" style="padding:8px">No trades yet</div></div>
+  </div>
+
+  <!-- INSIGHTS STRIP -->
+  <div class="insights-grid">
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#7d859033;color:#7d8590">—</div>
+      <div class="insight-body">
+        <div class="insight-label">Current streak</div>
+        <div class="insight-val">0<span class="insight-suffix"> trades</span></div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#58a6ff33;color:#58a6ff">★</div>
+      <div class="insight-body">
+        <div class="insight-label">Best single trade</div>
+        <div class="insight-val" style="color:#3fb950">$+0.00</div>
+        <div class="insight-sub">no trades yet</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#f8514933;color:#f85149">▼</div>
+      <div class="insight-body">
+        <div class="insight-label">Worst single trade</div>
+        <div class="insight-val" style="color:#f85149">$+0.00</div>
+        <div class="insight-sub">no trades yet</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#d2992233;color:#d29922">⏱</div>
+      <div class="insight-body">
+        <div class="insight-label">Next signal expected</div>
+        <div class="insight-val">—</div>
+        <div class="insight-sub">9 signals seen lifetime</div>
+      </div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-icon" style="background:#a371f733;color:#a371f7">⚖</div>
+      <div class="insight-body">
+        <div class="insight-label">Capital deployed</div>
+        <div class="insight-val">4<span class="insight-suffix">%</span></div>
+        <div class="insight-sub">$32 of $720 bankroll</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDAR + WATERFALL -->
+  <div class="row-2-1">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">📅 Daily PnL — last 21 days</div>
+        <span style="color:var(--text-mute);font-size:11px">brightness = magnitude</span>
+      </div>
+      <div class="calendar-grid">
+        <div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-22: no trades"><span class="cal-day">22</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-23: no trades"><span class="cal-day">23</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-24: no trades"><span class="cal-day">24</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-25: no trades"><span class="cal-day">25</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-26: no trades"><span class="cal-day">26</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-27: no trades"><span class="cal-day">27</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-28: no trades"><span class="cal-day">28</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-29: no trades"><span class="cal-day">29</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-04-30: no trades"><span class="cal-day">30</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-01: no trades"><span class="cal-day">01</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-02: no trades"><span class="cal-day">02</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-03: no trades"><span class="cal-day">03</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-04: no trades"><span class="cal-day">04</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-05: no trades"><span class="cal-day">05</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-06: no trades"><span class="cal-day">06</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-07: no trades"><span class="cal-day">07</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-08: no trades"><span class="cal-day">08</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-09: no trades"><span class="cal-day">09</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-10: no trades"><span class="cal-day">10</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-11: no trades"><span class="cal-day">11</span><span class="cal-pnl">·</span></div><div class="cal-cell" style="background:#161b22;color:#6e7681" title="2026-05-12: no trades"><span class="cal-day">12</span><span class="cal-pnl">·</span></div>
+      </div>
+      <div class="legend-row" style="margin-top:10px">
+        <div><span class="legend-dot" style="background:rgba(248,81,73,0.7)"></span>Loss</div>
+        <div><span class="legend-dot" style="background:#161b22;border:1px solid var(--border)"></span>No trades</div>
+        <div><span class="legend-dot" style="background:rgba(63,185,80,0.7)"></span>Profit</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">💵 PnL waterfall</div>
+      <div class="chart-cell"><canvas id="waterfall"></canvas></div>
+      <div class="stat-bar" style="font-size:11px">
+        <div>Gross <strong style="color:#7d8590">$+0.00</strong></div>
+        <div>− Fees <strong style="color:var(--red)">$0.00</strong></div>
+        <div>− Gas <strong style="color:var(--red)">$0.00</strong></div>
+        <div>= Net <strong style="color:#7d8590">$+0.00</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN: EQUITY + ACTIVITY FEED -->
+  <div class="row-2-1">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">📈 Equity curve <span class="chip">live vs backtest</span></div>
+        <span style="color:var(--text-mute);font-size:11px">$+0 cumulative · 0 trades</span>
+      </div>
+      <div class="chart-cell-large"><canvas id="equity"></canvas></div>
+      <div class="stat-bar">
+        <div>Max drawdown <strong style="color:#7d8590">$+0.00</strong></div>
+        <div>Avg trade <strong style="color:#7d8590">$+0.00</strong></div>
+        <div>Best <strong style="color:var(--green)">$+0.00</strong></div>
+        <div>Worst <strong style="color:var(--red)">$+0.00</strong></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Activity feed</div>
+      <div style="max-height:380px;overflow-y:auto">
+        <div class="activity-row"><span class="activity-time">05-12 19:06</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text">Opened long NYSE marketwide circuit breaker before 2027? at z=-6.42</span></div><div class="activity-row"><span class="activity-time">05-12 19:06</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #1: 3,161 markets, 9 signals, 1 opened, 0 closed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRATEGY ANALYTICS ROW -->
+  <div class="row-2-1">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">🕐 Time-of-day performance heatmap</div>
+        <span style="color:var(--text-mute);font-size:11px">UTC · all days × all hours</span>
+      </div>
+      <div class="hod-grid"><div class="hod-corner"></div><div class="hod-hour-label">00</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">03</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">06</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">09</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">12</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">15</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">18</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-hour-label">21</div><div class="hod-hour-label"></div><div class="hod-hour-label"></div><div class="hod-day-label">Mon</div><div class="hod-cell" style="background:#161b22" title="Mon 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Mon 23:00  no trades"></div><div class="hod-day-label">Tue</div><div class="hod-cell" style="background:#161b22" title="Tue 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Tue 23:00  no trades"></div><div class="hod-day-label">Wed</div><div class="hod-cell" style="background:#161b22" title="Wed 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Wed 23:00  no trades"></div><div class="hod-day-label">Thu</div><div class="hod-cell" style="background:#161b22" title="Thu 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Thu 23:00  no trades"></div><div class="hod-day-label">Fri</div><div class="hod-cell" style="background:#161b22" title="Fri 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Fri 23:00  no trades"></div><div class="hod-day-label">Sat</div><div class="hod-cell" style="background:#161b22" title="Sat 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sat 23:00  no trades"></div><div class="hod-day-label">Sun</div><div class="hod-cell" style="background:#161b22" title="Sun 00:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 01:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 02:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 03:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 04:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 05:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 06:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 07:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 08:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 09:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 10:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 11:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 12:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 13:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 14:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 15:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 16:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 17:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 18:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 19:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 20:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 21:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 22:00  no trades"></div><div class="hod-cell" style="background:#161b22" title="Sun 23:00  no trades"></div></div>
+      <div class="legend-row" style="margin-top:8px">
+        <div><span class="legend-dot" style="background:rgba(248,81,73,0.7)"></span>Loss hours</div>
+        <div><span class="legend-dot" style="background:#161b22;border:1px solid var(--border)"></span>Unused</div>
+        <div><span class="legend-dot" style="background:rgba(63,185,80,0.7)"></span>Profit hours</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">🥧 Open portfolio</div>
+        <span style="color:var(--text-mute);font-size:11px">stake by category</span>
+      </div>
+      <div class="chart-cell"><canvas id="portfolio"></canvas></div>
+    </div>
+  </div>
+
+  <!-- STREAK + OPEN POSITIONS -->
+  <div class="row-1-1">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">📊 Streak history</div>
+        <span style="color:var(--text-mute);font-size:11px">consecutive W/L runs</span>
+      </div>
+      <div class="chart-cell-small"><canvas id="streaks"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">📈 PnL distribution per trade</div>
+      </div>
+      <div class="chart-cell-small"><canvas id="pnlhist"></canvas></div>
+    </div>
+  </div>
+
+  <!-- OPEN POSITIONS -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">
+      <div class="card-title-row">🎯 Open positions <span class="chip">1/10</span></div>
+    </div>
+    
+    <div class="pos-card">
+        <div class="pos-card-top">
+            <div class="pos-question">NYSE marketwide circuit breaker before 2027?</div>
+            <div class="pos-dir" style="color:#3fb950">LONG</div>
+        </div>
+        <div class="pos-stats">
+            <div class="pos-stat"><span class="pos-stat-label">z-score</span><span class="pos-stat-val">-6.42σ</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Entry</span><span class="pos-stat-val">$0.210</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Spread</span><span class="pos-stat-val">1.0¢</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Stake</span><span class="pos-stat-val">$32</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">0.0h</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">DTE</span><span class="pos-stat-val">232d</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:#7d8590">pending</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Category</span><span class="pos-stat-val">finance</span></div>
+        </div>
+    </div>
+  </div>
+
+  <!-- BOT HEALTH + LIFETIME STATS -->
+  <div class="row-2-1">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-row">🫀 Recent cycles (heartbeat)</div>
+        <span style="color:var(--text-mute);font-size:11px">scan every ~15min</span>
+      </div>
+      <div style="max-height:340px;overflow-y:auto">
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Cycle</th><th class="num">Markets</th><th class="num">Signals</th><th class="num">Opened</th><th class="num">Closed</th><th>Filters</th></tr>
+          </thead>
+          <tbody>
+        <tr>
+            <td class="mono">05-12 19:06</td>
+            <td class="mono">#1</td>
+            <td class="mono num">3,161</td>
+            <td class="mono num" style="color:#3fb950">9</td>
+            <td class="mono num" style="color:#58a6ff">1</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td><span class="chip">no signal: 1,709</span> <span class="chip">z too low: 1,330</span></td>
+        </tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Lifetime totals</div>
+      <div style="display:grid;grid-template-columns:1fr;gap:12px;font-size:13px">
+        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Markets scanned</div><div class="mono" style="font-size:22px;font-weight:600">3,161</div></div>
+        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">z≥5 signals seen</div><div class="mono" style="font-size:22px;font-weight:600">9</div></div>
+        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Conversion (signals → entries)</div><div class="mono" style="font-size:22px;font-weight:600">11.1%</div></div>
+        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Filter rejection split</div>
+          <div style="margin-top:4px">
+            <span class="chip" style="margin:2px 4px 2px 0">no signal: <strong style="color:var(--text)">1,709</strong></span><span class="chip" style="margin:2px 4px 2px 0">z too low: <strong style="color:var(--text)">1,330</strong></span><span class="chip" style="margin:2px 4px 2px 0">no history: <strong style="color:var(--text)">113</strong></span><span class="chip" style="margin:2px 4px 2px 0">dte filter: <strong style="color:var(--text)">4</strong></span><span class="chip" style="margin:2px 4px 2px 0">price boundary: <strong style="color:var(--text)">3</strong></span><span class="chip" style="margin:2px 4px 2px 0">entry failed book: <strong style="color:var(--text)">1</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS GRID -->
+  <div class="row-1-1-1">
+    <div class="card">
+      <div class="card-title">📉 Drawdown</div>
+      <div class="chart-cell"><canvas id="drawdown"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎯 Rolling 20-trade win rate</div>
+      <div class="chart-cell"><canvas id="rollwin"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔮 Forecast cone (next 100 trades)</div>
+      <div class="chart-cell"><canvas id="forecast"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-title">🏷 Performance by market category</div>
+    <table>
+      <thead>
+        <tr><th>Category</th><th class="num">n</th><th class="num">Win%</th><th class="num">Avg</th><th class="num">Total</th></tr>
+      </thead>
+      <tbody><tr><td colspan="5" class="empty-state-small">No closed trades</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- RECENT TRADES -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-title">📋 Recent closed trades</div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Exit</th><th>Market</th><th class="num">z</th><th class="center">Dir</th>
+            <th class="num">Px in→out</th><th class="num">Spread</th><th class="num">Stake</th>
+            <th class="num">Held</th><th>Reason</th><th class="num">CLV</th><th class="num">Fees</th><th class="num">Net</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="12" class="empty-state-small">No closed trades yet · z≥5 spikes typically revert in 12-48h</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss (backtest showed it hurts) · max 48h hold · $30/trade</div>
+    <div>0 closed · 1 open · 1 cycles</div>
+  </footer>
+
+</div>
+
+<script>
+const DARK = {
+  text: '#e6edf3', textDim: '#8b949e', textMute: '#6e7681',
+  bg: '#11161d', surface: '#161b22', border: '#30363d',
+  green: '#3fb950', red: '#f85149', blue: '#58a6ff', purple: '#a371f7', amber: '#d29922'
+};
+
+Chart.defaults.color = DARK.textDim;
+Chart.defaults.borderColor = DARK.border;
+Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, Inter, system-ui';
+Chart.defaults.scale.grid.color = DARK.border + '40';
+Chart.defaults.scale.grid.drawBorder = false;
+Chart.defaults.plugins.legend.display = false;
+
+const COMMON = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+        legend: { display: false },
+        tooltip: { mode: 'index', intersect: false, backgroundColor: '#0a0e14', borderColor: DARK.border, borderWidth: 1, titleColor: DARK.text, bodyColor: DARK.text, padding: 10 }
+    },
+    interaction: { mode: 'nearest', intersect: false }
+};
+
+const equity_x = [];
+const equity_y = [];
+const baseline_y = [];
+
+if (equity_y.length > 0) {
+    new Chart(document.getElementById('equity'), {
+        type: 'line',
+        data: {
+            labels: equity_x,
+            datasets: [
+                { label: 'Expected', data: baseline_y, borderColor: DARK.textMute, borderDash: [4, 4], pointRadius: 0, fill: false, borderWidth: 1.5 },
+                { label: 'Break-even', data: equity_y.map(() => 0), borderColor: DARK.red + '66', borderDash: [2, 4], pointRadius: 0, fill: false, borderWidth: 1 },
+                { label: 'Live', data: equity_y, borderColor: DARK.blue, backgroundColor: DARK.blue + '22', fill: true, tension: 0.2, pointRadius: 3, pointBackgroundColor: DARK.blue, borderWidth: 2 },
+            ]
+        },
+        options: { ...COMMON, scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { callback: (v) => '$' + v } } } }
+    });
+} else {
+    document.getElementById('equity').parentElement.innerHTML = '<div class="empty-state">No closed trades yet · waiting for first z≥5 signal to revert</div>';
+}
+
+// Drawdown
+const drawdown_y = [];
+if (drawdown_y.length > 0) {
+    new Chart(document.getElementById('drawdown'), {
+        type: 'line',
+        data: { labels: equity_x, datasets: [{ data: drawdown_y, borderColor: DARK.red, backgroundColor: DARK.red + '22', fill: 'origin', pointRadius: 0, borderWidth: 2 }] },
+        options: { ...COMMON, scales: { x: { ticks: { maxTicksLimit: 6 } }, y: { max: 0, ticks: { callback: (v) => '$' + v } } } }
+    });
+} else {
+    document.getElementById('drawdown').parentElement.innerHTML = '<div class="empty-state-small">no data</div>';
+}
+
+// Rolling win rate
+const rw_x = [];
+const rw_y = [];
+if (rw_y.length > 0) {
+    new Chart(document.getElementById('rollwin'), {
+        type: 'line',
+        data: { labels: rw_x, datasets: [
+            { data: rw_y.map(() => 50.0), borderColor: DARK.textMute, borderDash: [4, 4], pointRadius: 0, fill: false, borderWidth: 1 },
+            { data: rw_y, borderColor: DARK.green, backgroundColor: DARK.green + '22', fill: true, pointRadius: 2, borderWidth: 2 },
+        ] },
+        options: { ...COMMON, scales: { y: { min: 0, max: 100, ticks: { callback: (v) => v + '%' } } } }
+    });
+} else {
+    document.getElementById('rollwin').parentElement.innerHTML = '<div class="empty-state-small">need 20+ trades</div>';
+}
+
+// Forecast cone
+const proj_p5 = [-25.21, -34.43, -41.29, -52.4, -54.61, -61.79, -61.49, -72.15, -76.32, -76.33, -81.45, -87.78, -87.11, -97.76, -94.26, -100.53, -99.15, -105.06, -113.34, -113.97, -109.39, -111.92, -127.03, -126.12, -125.48, -122.45, -123.18, -141.59, -128.4, -130.9, -139.93, -137.33, -135.15, -145.63, -156.97, -148.38, -144.66, -155.48, -153.91, -158.22, -166.1, -143.93, -167.31, -168.84, -165.79, -167.21, -170.56, -178.32, -171.05, -165.24, -177.21, -180.72, -190.55, -189.42, -187.03, -194.5, -190.35, -188.1, -189.81, -202.85, -188.06, -195.81, -193.19, -212.85, -200.12, -224.77, -201.16, -182.82, -201.98, -209.12, -208.23, -220.67, -216.85, -208.82, -200.26, -221.03, -198.35, -216.67, -233.85, -218.59, -231.86, -237.26, -240.85, -231.45, -217.17, -229.66, -233.58, -235.38, -250.49, -226.5, -218.01, -240.15, -242.67, -237.36, -233.59, -245.93, -242.68, -254.68, -252.52, -245.5];
+const proj_p50 = [-0.28, -0.13, -1.53, -1.4, 0.53, 0.2, 1.0, -1.06, 1.29, 2.25, 1.43, 2.86, 1.69, -2.35, -0.11, -0.11, -0.07, -1.24, 4.43, -2.86, 0.37, -2.96, -1.3, -0.95, 0.72, -0.91, -0.2, 0.52, 2.54, -2.77, -1.97, -1.03, 0.86, -2.75, -0.56, -2.35, 0.55, -1.5, -5.88, -1.2, -1.12, 2.11, -1.75, -5.15, -6.26, 0.55, -3.9, -0.85, -1.02, 1.1, 1.07, -0.09, -0.41, 0.29, -4.47, -6.57, 7.95, 5.62, 1.03, -0.4, 3.29, 5.0, -1.05, -10.8, -8.0, -3.54, -1.66, 4.79, 4.88, -6.65, 1.63, 4.42, -2.16, 1.57, 4.42, 3.5, 3.07, -3.91, -2.54, -3.26, -2.9, -9.48, -8.36, 2.57, 3.83, -7.14, 0.24, 6.83, -6.83, -6.43, -1.76, -3.18, 4.46, 3.94, -11.73, 4.6, -4.32, -2.49, -0.95, -4.57];
+const proj_p95 = [26.17, 36.01, 41.83, 49.88, 55.64, 62.18, 65.32, 66.09, 73.76, 81.28, 84.91, 89.0, 90.96, 91.5, 101.21, 105.75, 98.81, 110.02, 114.72, 110.95, 117.81, 117.49, 119.43, 122.6, 122.21, 133.97, 123.81, 132.68, 132.51, 137.51, 137.89, 142.12, 136.13, 147.85, 149.66, 151.16, 159.04, 151.84, 154.35, 161.06, 154.11, 159.8, 165.19, 151.03, 176.55, 171.47, 168.36, 174.43, 173.74, 165.38, 175.33, 188.72, 189.34, 193.67, 195.05, 181.14, 191.29, 188.86, 184.66, 190.13, 201.56, 193.5, 184.7, 201.62, 204.26, 204.5, 202.03, 202.57, 204.51, 205.91, 207.07, 209.67, 210.43, 210.41, 223.14, 201.64, 221.34, 211.22, 221.44, 211.45, 221.68, 223.11, 217.25, 224.36, 236.54, 232.16, 242.83, 230.37, 206.1, 231.61, 227.35, 255.34, 250.01, 244.33, 247.16, 246.5, 239.44, 244.91, 256.42, 263.43];
+const n_closed = 0;
+const labels_forecast = [];
+for (let i = 1; i <= n_closed + proj_p50.length; i++) labels_forecast.push(i);
+const live_p = equity_y.concat(proj_p50.map(() => null));
+const p5_p = equity_y.map(() => null).concat(proj_p5);
+const p50_p = equity_y.map(() => null).concat(proj_p50);
+const p95_p = equity_y.map(() => null).concat(proj_p95);
+
+new Chart(document.getElementById('forecast'), {
+    type: 'line',
+    data: { labels: labels_forecast, datasets: [
+        { data: p95_p, borderColor: DARK.green + '66', backgroundColor: DARK.green + '15', fill: '+1', pointRadius: 0, borderWidth: 1 },
+        { data: p5_p, borderColor: DARK.green + '66', fill: false, pointRadius: 0, borderWidth: 1 },
+        { data: p50_p, borderColor: DARK.green, pointRadius: 0, fill: false, borderWidth: 2 },
+        { data: live_p, borderColor: DARK.blue, backgroundColor: DARK.blue + '22', pointRadius: 1.5, fill: false, borderWidth: 2 },
+    ] },
+    options: { ...COMMON, scales: { y: { ticks: { callback: (v) => '$' + v } } } }
+});
+
+// Waterfall: gross → -fees → -gas → net
+const wGross = 0;
+const wFees = 0;
+const wGas = 0;
+const wNet = 0;
+if (wGross !== 0 || wFees !== 0 || wGas !== 0) {
+    new Chart(document.getElementById('waterfall'), {
+        type: 'bar',
+        data: {
+            labels: ['Gross', '− Fees', '− Gas', 'Net'],
+            datasets: [{
+                data: [wGross, -wFees, -wGas, wNet],
+                backgroundColor: [
+                    wGross >= 0 ? DARK.green + 'cc' : DARK.red + 'cc',
+                    DARK.red + 'aa',
+                    DARK.red + 'aa',
+                    wNet >= 0 ? DARK.green : DARK.red
+                ],
+                borderWidth: 0,
+                borderRadius: 4,
+            }]
+        },
+        options: { ...COMMON, scales: { y: { ticks: { callback: (v) => '$' + v } } } }
+    });
+} else {
+    document.getElementById('waterfall').parentElement.innerHTML += '<div class="empty-state-small">No trades yet</div>';
+}
+
+// ── Sparklines (inside hero cells) ──
+const sparkOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    scales: { x: { display: false }, y: { display: false } },
+    elements: { point: { radius: 0 }, line: { borderWidth: 1.5, tension: 0.4 } }
+};
+function mkSpark(id, data, color) {
+    if (!data || data.length < 2) return;
+    new Chart(document.getElementById(id), {
+        type: 'line',
+        data: { labels: data.map((_, i) => i), datasets: [{ data: data, borderColor: color, backgroundColor: color + '20', fill: true }] },
+        options: sparkOpts
+    });
+}
+mkSpark('spark_equity', [], '#3fb950');
+mkSpark('spark_clv', [], '#3fb950');
+mkSpark('spark_winrate', [], '#58a6ff');
+mkSpark('spark_pos', [1], '#a371f7');
+
+// ── Portfolio donut ──
+const portLabels = ["finance"];
+const portValues = [31.5];
+if (portValues.length > 0) {
+    new Chart(document.getElementById('portfolio'), {
+        type: 'doughnut',
+        data: {
+            labels: portLabels,
+            datasets: [{
+                data: portValues,
+                backgroundColor: ['#58a6ff', '#3fb950', '#a371f7', '#d29922', '#f85149', '#79c0ff', '#7ee787', '#ff7b72'],
+                borderColor: '#0a0e14', borderWidth: 2
+            }]
+        },
+        options: {
+            ...COMMON,
+            plugins: {
+                ...COMMON.plugins,
+                legend: { display: true, position: 'right', labels: { color: DARK.text, font: { size: 11 } } },
+                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: $${ctx.parsed.toFixed(2)}` } }
+            },
+            cutout: '60%'
+        }
+    });
+} else {
+    document.getElementById('portfolio').parentElement.innerHTML = '<div class="empty-state">No open positions</div>';
+}
+
+// ── Streak history ──
+const streakData = [];
+if (streakData.length > 0) {
+    new Chart(document.getElementById('streaks'), {
+        type: 'bar',
+        data: {
+            labels: streakData.map((_, i) => i + 1),
+            datasets: [{
+                data: streakData,
+                backgroundColor: streakData.map(v => v > 0 ? DARK.green + 'cc' : DARK.red + 'cc'),
+                borderWidth: 0,
+                borderRadius: 3,
+            }]
+        },
+        options: {
+            ...COMMON,
+            scales: { y: { ticks: { callback: (v) => Math.abs(v) } } },
+            plugins: { ...COMMON.plugins, tooltip: { callbacks: { label: (ctx) => (ctx.parsed.y > 0 ? `${ctx.parsed.y} wins in a row` : `${Math.abs(ctx.parsed.y)} losses in a row`) } } }
+        }
+    });
+} else {
+    document.getElementById('streaks').parentElement.innerHTML += '<div class="empty-state-small">No streaks yet · need closed trades</div>';
+}
+
+// ── Animated counter (count up on load for net PnL hero) ──
+document.querySelectorAll('.animated-num').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    if (isNaN(target)) return;
+    const prefix = el.dataset.prefix || '';
+    const prec = parseInt(el.dataset.prec || '0');
+    const duration = 800;
+    const start = performance.now();
+    const fmt = (v) => (v >= 0 ? '+' : '') + prefix + v.toFixed(prec);
+    function tick(t) {
+        const p = Math.min(1, (t - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmt(target * eased);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = fmt(target);
+    }
+    requestAnimationFrame(tick);
+});
+
+// PnL histogram
+const pnls = [];
+if (pnls.length > 0) {
+    const bins = 25; const min = Math.min(...pnls), max = Math.max(...pnls);
+    const range = max - min || 1; const w = range / bins;
+    const buckets = new Array(bins).fill(0); const labels = [];
+    for (let i = 0; i < bins; i++) labels.push((min + w * (i + 0.5)).toFixed(1));
+    pnls.forEach(p => buckets[Math.min(bins - 1, Math.floor((p - min) / w))]++);
+    new Chart(document.getElementById('pnlhist'), {
+        type: 'bar',
+        data: { labels: labels, datasets: [{ data: buckets, backgroundColor: labels.map(l => parseFloat(l) >= 0 ? DARK.green + 'cc' : DARK.red + 'cc'), borderWidth: 0 }] },
+        options: COMMON
+    });
+} else {
+    document.getElementById('pnlhist').parentElement.innerHTML = '<div class="empty-state-small">no trades</div>';
+}
+</script>
+
+</body>
+</html>
