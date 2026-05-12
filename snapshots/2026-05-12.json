@@ -1,0 +1,31 @@
+{
+  "date": "2026-05-12",
+  "ts": 1778614403,
+  "cycle": 2,
+  "universe_size": 3173,
+  "open_positions_count": 2,
+  "open_positions_summary": [
+    {
+      "market_id": "670058",
+      "question": "NYSE marketwide circuit breaker before 2027?",
+      "entry_z": -6.424692976469554,
+      "entry_exec_price": 0.21000000000000002,
+      "direction": 1,
+      "shares": 150.0,
+      "held_hours": 0.44083333333333335,
+      "clv_value": null,
+      "dte": 232.2035185185185
+    },
+    {
+      "market_id": "665513",
+      "question": "Friedrich Merz out as Chancellor of Germany before 2027?",
+      "entry_z": 6.5016645400270265,
+      "entry_exec_price": 0.1555905433594914,
+      "direction": -1,
+      "shares": 35.95357142857143,
+      "held_hours": 0.0002777777777777778,
+      "clv_value": null,
+      "dte": 232.18516203703703
+    }
+  ]
+}
