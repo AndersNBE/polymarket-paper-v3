@@ -14,3 +14,4 @@ spread_sample.json
 blindspot_results.json
 .DS_Store
 .claude/
+paper_history_cache*.json

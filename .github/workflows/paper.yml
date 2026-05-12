@@ -62,6 +62,9 @@ jobs:
               echo "Missing: $f"
             fi
           done
+          if [ -d snapshots ]; then
+            git add -f snapshots/ && echo "Added: snapshots/"
+          fi
           date -u +%Y-%m-%dT%H:%MZ > .heartbeat
           git add -f .heartbeat
           if git diff --staged --quiet; then
