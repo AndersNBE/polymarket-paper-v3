@@ -84,9 +84,11 @@ CFG = {
     "dte_block_lo": 0,       # legacy field, kept for compatibility
     "dte_block_hi": 0,
     "direction_filter": None,
-    # stop-loss (NEW in v3)
-    "stop_loss_z_extra": 1.5,  # exit if |z| exceeds entry_z by this much (signal intensifying)
-    "stop_loss_price_move": 0.15,  # OR exit if mid moves > 15¢ against us
+    # stop-loss (NEW in v3) — DISABLED based on backtest showing it hurts performance
+    # Backtest: V3 dte>=30 only: $1.04/trade; V3 + stop-loss: $0.91/trade (worse)
+    # We keep the logic available but set thresholds high enough that they don't trigger.
+    "stop_loss_z_extra": 999,  # effectively off (was 1.5)
+    "stop_loss_price_move": 999,  # effectively off (was 0.15)
     # execution model
     "trade_size_usd": 30.0,  # changed to match realistic bankroll (was $100)
     "fee_rates": {

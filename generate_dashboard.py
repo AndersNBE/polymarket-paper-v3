@@ -972,7 +972,7 @@ html = f"""<!DOCTYPE html>
   </div>
 
   <footer>
-    <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · stop-loss (z+1.5 or 15¢ adverse) · max 48h hold · $30/trade</div>
+    <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss (backtest showed it hurts) · max 48h hold · $30/trade</div>
     <div>{n_closed} closed · {n_open} open · {cycles_run} cycles</div>
   </footer>
 
