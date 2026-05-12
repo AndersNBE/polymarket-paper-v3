@@ -100,11 +100,11 @@
   .pos-stat-val { font-size: 13px; font-weight: 500; font-family: "SF Mono", "Menlo", monospace; margin-top: 2px; }
 
   /* Activity feed */
-  .activity-row { display: grid; grid-template-columns: 80px 24px 1fr; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+  .activity-row { display: grid; grid-template-columns: 80px 24px 1fr; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; gap: 8px; }
   .activity-row:last-child { border-bottom: none; }
   .activity-time { color: var(--text-mute); font-family: "SF Mono", "Menlo", monospace; font-size: 11px; }
   .activity-icon { text-align: center; font-weight: bold; }
-  .activity-text { color: var(--text); }
+  .activity-text { color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: help; }
 
   /* Stat detail bar */
   .stat-bar { display: flex; gap: 18px; font-size: 12px; color: var(--text-dim); margin-top: 8px; }
@@ -189,14 +189,14 @@
       <div class="logo-mark">P</div>
       <div class="logo-text">
         <h1>Polymarket Paper Trader</h1>
-        <div class="sub">2026-05-12 20:48:03 UTC · Cycle #7 · Started 2026-05-12</div>
+        <div class="sub">2026-05-12 20:53:47 UTC · Cycle #7 · Started 2026-05-12</div>
       </div>
     </div>
     <div class="live-pill">
       <span class="live-dot"></span>
       <span style="color:#3fb950;font-weight:600">LIVE</span>
       <span style="color:var(--text-mute)">·</span>
-      <span style="color:var(--text-dim)">0m ago</span>
+      <span style="color:var(--text-dim)">6m ago</span>
     </div>
   </header>
 
@@ -214,7 +214,7 @@
     <div class="hero-cell hero-cell-primary">
       <div class="hero-label">Net PnL</div>
       <div class="hero-value mono animated-num" data-target="0" data-prefix="$" data-prec="2" style="color:#7d8590">$+0.00</div>
-      <div class="hero-sub">0 trades · $0.00 fees paid · $$0.00 before fees</div>
+      <div class="hero-sub">0 trades · $0.00 fees paid · $+0.00 before fees</div>
       <div class="sparkline-wrap"><canvas class="sparkline" id="spark_equity" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
@@ -336,7 +336,7 @@
     <div class="card">
       <div class="card-title">⚡ Activity feed</div>
       <div style="max-height:380px;overflow-y:auto">
-        <div class="activity-row"><span class="activity-time">05-12 20:48</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #7: 3,142 markets, 31 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 20:33</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #6: 3,163 markets, 37 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 20:18</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #5: 3,166 markets, 32 signals, 1 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 20:18</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text">Opened long Will Google have the top AI model at the end of Ju at z=-5.07</span></div><div class="activity-row"><span class="activity-time">05-12 20:03</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #4: 3,188 markets, 8 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 19:47</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #3: 3,178 markets, 32 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 19:33</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #2: 3,172 markets, 29 signals, 1 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 19:33</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text">Opened short Friedrich Merz out as Chancellor of Germany before at z=+6.50</span></div><div class="activity-row"><span class="activity-time">05-12 19:06</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text">Opened long NYSE marketwide circuit breaker before 2027? at z=-6.42</span></div><div class="activity-row"><span class="activity-time">05-12 19:06</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text">Scan #1: 3,161 markets, 9 signals, 1 opened, 0 closed</span></div>
+        <div class="activity-row"><span class="activity-time">05-12 20:48</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #7: 3,142 markets, 31 signals, 0 opened, 0 closed">Scan #7: 3,142 markets, 31 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 20:33</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #6: 3,163 markets, 37 signals, 0 opened, 0 closed">Scan #6: 3,163 markets, 37 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 20:18</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #5: 3,166 markets, 32 signals, 1 opened, 0 closed">Scan #5: 3,166 markets, 32 signals, 1 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 20:18</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text" title="Opened long Will Google have the top AI model at the end of Ju at z=-5.07">Opened long Will Google have the top AI model at the end of Ju at z=-5.07</span></div><div class="activity-row"><span class="activity-time">05-12 20:03</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #4: 3,188 markets, 8 signals, 0 opened, 0 closed">Scan #4: 3,188 markets, 8 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 19:47</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #3: 3,178 markets, 32 signals, 0 opened, 0 closed">Scan #3: 3,178 markets, 32 signals, 0 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 19:33</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #2: 3,172 markets, 29 signals, 1 opened, 0 closed">Scan #2: 3,172 markets, 29 signals, 1 opened, 0 closed</span></div><div class="activity-row"><span class="activity-time">05-12 19:33</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text" title="Opened short Friedrich Merz out as Chancellor of Germany before at z=+6.50">Opened short Friedrich Merz out as Chancellor of Germany before at z=+6.50</span></div><div class="activity-row"><span class="activity-time">05-12 19:06</span><span class="activity-icon" style="color:#58a6ff">▲</span><span class="activity-text" title="Opened long NYSE marketwide circuit breaker before 2027? at z=-6.42">Opened long NYSE marketwide circuit breaker before 2027? at z=-6.42</span></div><div class="activity-row"><span class="activity-time">05-12 19:06</span><span class="activity-icon" style="color:#7d8590">↻</span><span class="activity-text" title="Scan #1: 3,161 markets, 9 signals, 1 opened, 0 closed">Scan #1: 3,161 markets, 9 signals, 1 opened, 0 closed</span></div>
       </div>
     </div>
   </div>
@@ -397,7 +397,7 @@
             <div class="pos-stat"><span class="pos-stat-label">Entry</span><span class="pos-stat-val">$0.269</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Spread</span><span class="pos-stat-val">5.0¢</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Stake</span><span class="pos-stat-val">$31</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">0.5h</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">0.6h</span></div>
             <div class="pos-stat"><span class="pos-stat-label">DTE</span><span class="pos-stat-val">48d</span></div>
             <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:#7d8590">pending</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Category</span><span class="pos-stat-val">tech</span></div>
@@ -413,7 +413,7 @@
             <div class="pos-stat"><span class="pos-stat-label">Entry</span><span class="pos-stat-val">$0.156</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Spread</span><span class="pos-stat-val">1.0¢</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Stake</span><span class="pos-stat-val">$30</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">1.2h</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">1.3h</span></div>
             <div class="pos-stat"><span class="pos-stat-label">DTE</span><span class="pos-stat-val">232d</span></div>
             <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:#f85149">-7.50¢</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Category</span><span class="pos-stat-val">politics</span></div>
@@ -429,7 +429,7 @@
             <div class="pos-stat"><span class="pos-stat-label">Entry</span><span class="pos-stat-val">$0.210</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Spread</span><span class="pos-stat-val">1.0¢</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Stake</span><span class="pos-stat-val">$32</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">1.7h</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">1.8h</span></div>
             <div class="pos-stat"><span class="pos-stat-label">DTE</span><span class="pos-stat-val">232d</span></div>
             <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:#f85149">-0.50¢</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Category</span><span class="pos-stat-val">finance</span></div>
