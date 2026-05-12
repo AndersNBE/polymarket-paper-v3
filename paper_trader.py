@@ -111,7 +111,10 @@ CFG = {
     "slippage_ticks": 1,         # additional 1-tick "latency cost" beyond orderbook walk
     "clv_lookback_sec": 30 * 60, # measure CLV 30 min after entry
     # require both sides quoted with at least this many tick widths
-    "max_spread_for_entry": 0.05,   # don't enter if spread > 5¢
+    "max_spread_for_entry": 0.05,   # don't enter if top-of-book spread > 5¢
+    # post-orderbook-walk slippage filter. Top-of-book spread is a lie when top level is thin.
+    # Reject if walking the book for our trade size pushes the avg fill > N¢ adverse to mid.
+    "max_slippage_for_entry": 0.02,  # 2¢ — Lithuania-style fat-spread trade had 7.2¢
     # rate limiting
     "api_delay_sec": 0.04,
     # parallel HTTP workers for fetching per-market price history
@@ -483,6 +486,11 @@ def simulate_entry(market, direction, signal_data, token_id=None):
 
     if exec_price <= 0.001 or exec_price >= 0.999:
         return None
+    # Effective-slippage filter: how far from mid we actually filled.
+    mid_price = signal_data["current"]
+    signed_slip = (exec_price - mid_price) * direction  # >0 = adverse
+    if signed_slip > CFG["max_slippage_for_entry"]:
+        return None
     fee_type = market.get("feeType")
     entry_fee = fee_for_fill(exec_price, shares, fee_type)
     gas = CFG["gas_per_fill_usd"]
@@ -494,6 +502,7 @@ def simulate_entry(market, direction, signal_data, token_id=None):
         "entry_ts": now_ts(),
         "entry_price_mid": signal_data["current"],
         "entry_exec_price": exec_price,
+        "entry_slippage": signed_slip,
         "entry_bid": bid,
         "entry_ask": ask,
         "entry_spread": spread,
