@@ -8,9 +8,11 @@ Regenerated on every workflow cycle; served via GitHub Pages.
 import json
 import datetime
 import random
+import time
 from pathlib import Path
 from html import escape
 from collections import defaultdict
+import requests
 
 HERE = Path(__file__).parent
 STATE_FILE = HERE / "paper_state.json"
@@ -20,11 +22,11 @@ CYCLES_FILE = HERE / "paper_cycles.jsonl"
 OUT = HERE / "dashboard.html"
 
 # V3 expectations — UNKNOWN (this is the actual test)
-EXP_AVG_TRADE = 0.0   # unknown — we'll measure
-EXP_WIN_RATE = 50.0   # 50% is coin-flip baseline
-EXP_STD = 50.0        # unknown
-EXP_CLV = 0.5         # ≥0.5¢ with confidence = mean reversion edge confirmed
-EXP_TRADES_PER_DAY = 0.5  # honest estimate based on backtest_v3
+EXP_AVG_TRADE = 0.0
+EXP_WIN_RATE = 50.0
+EXP_STD = 50.0
+EXP_CLV = 0.5
+EXP_TRADES_PER_DAY = 0.5
 BANKROLL_USD = 720
 STAKE = 30
 STRATEGY_LABEL = "V3 — dte>=30 + no stop-loss"
@@ -361,6 +363,43 @@ def color_for(v):
     if v < 0: return "#f85149"
     return "#7d8590"
 
+# ── Fetch live price-history for each open position (for trajectory chart) ──
+CLOB = "https://clob.polymarket.com"
+
+def fetch_position_history(yes_token):
+    try:
+        r = requests.get(f"{CLOB}/prices-history",
+                         params={"market": yes_token, "fidelity": 60, "interval": "max"},
+                         timeout=10)
+        if r.status_code == 200:
+            return r.json().get("history", [])
+    except requests.RequestException:
+        pass
+    return None
+
+position_charts = {}   # market_id -> {"bars": [{t, p}], "entry_ts": ..., "entry_price": ..., "direction": ...}
+for mid, pos in open_positions.items():
+    tok = pos.get("yes_token_id")
+    if not tok: continue
+    hist = fetch_position_history(tok)
+    time.sleep(0.05)
+    if not hist:
+        continue
+    # Keep only bars within ±48h of entry (focused window)
+    entry_ts = pos.get("entry_ts", 0)
+    window_start = entry_ts - 48 * 3600
+    window_end = entry_ts + 96 * 3600
+    bars = [{"t": h["t"], "p": h["p"]} for h in hist if window_start <= h["t"] <= window_end]
+    if len(bars) < 5: continue
+    position_charts[mid] = {
+        "bars": bars,
+        "entry_ts": entry_ts,
+        "entry_price": pos.get("entry_exec_price"),
+        "entry_mid": pos.get("entry_price_mid"),
+        "direction": pos.get("direction"),
+        "entry_z": pos.get("entry_z"),
+    }
+
 # ── Build position cards (instead of table) ─────────────────────
 position_cards = ""
 for mid, pos in sorted(open_positions.items(), key=lambda kv: kv[1].get("entry_ts", 0), reverse=True):
@@ -373,6 +412,8 @@ for mid, pos in sorted(open_positions.items(), key=lambda kv: kv[1].get("entry_t
     clv_html = f'<div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:{color_for(clv)}">{clv*100:+.2f}¢</span></div>' if clv is not None else '<div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:#7d8590">pending</span></div>'
     spread = pos.get("entry_spread", 0) * 100
     category = (pos.get('fee_type') or 'other').replace('_fees', '').replace('_v2', '').replace('_prices', '')
+    has_chart = mid in position_charts
+    chart_html = f'<div class="pos-chart-wrap"><canvas class="pos-chart" id="poschart_{mid}" width="600" height="120"></canvas></div>' if has_chart else ""
     position_cards += f"""
     <div class="pos-card">
         <div class="pos-card-top">
@@ -389,6 +430,7 @@ for mid, pos in sorted(open_positions.items(), key=lambda kv: kv[1].get("entry_t
             {clv_html}
             <div class="pos-stat"><span class="pos-stat-label">Category</span><span class="pos-stat-val">{category}</span></div>
         </div>
+        {chart_html}
     </div>"""
 if not position_cards:
     position_cards = '<div class="empty-state">No open positions · waiting for z≥5 signals (typically 0-2 per cycle)</div>'
@@ -427,6 +469,7 @@ for it in activity_items:
     dt_str = datetime.datetime.fromtimestamp(it["ts"], datetime.timezone.utc).strftime("%m-%d %H:%M")
     icon = {"close": "✗", "open": "▲", "cycle": "↻"}[it["type"]]
     color = {"close": "#a371f7", "open": "#58a6ff", "cycle": "#7d8590"}[it["type"]]
+    # Use title attr for full text on hover
     activity_html += f'<div class="activity-row"><span class="activity-time">{dt_str}</span><span class="activity-icon" style="color:{color}">{icon}</span><span class="activity-text" title="{escape(it["label"])}">{it["label"]}</span></div>'
 if not activity_html:
     activity_html = '<div class="empty-state-small">No activity yet · waiting for first cycle</div>'
@@ -667,6 +710,10 @@ html = f"""<!DOCTYPE html>
   .hod-cell {{ aspect-ratio: 1; border-radius: 2px; cursor: default; transition: transform 0.15s; }}
   .hod-cell:hover {{ transform: scale(1.5); z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }}
 
+  /* Position chart per open position */
+  .pos-chart-wrap {{ position: relative; height: 120px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }}
+  .pos-chart {{ width: 100% !important; height: 110px !important; max-height: 110px; display: block; }}
+
   /* Animated numbers — initial fade in */
   .animated-num {{ animation: fadeUp 0.6s ease-out; }}
   @keyframes fadeUp {{
@@ -693,7 +740,7 @@ html = f"""<!DOCTYPE html>
     <div class="logo">
       <div class="logo-mark">P</div>
       <div class="logo-text">
-        <h1>Polymarket Paper Trader</h1>
+        <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
         <div class="sub">{now_str} · Cycle #{cycles_run} · Started {started_at[:10] if started_at != '—' else '—'}</div>
       </div>
     </div>
@@ -970,7 +1017,7 @@ html = f"""<!DOCTYPE html>
   </div>
 
   <footer>
-    <div>Auto-refresh 60s · v1 strategy (z≥5, both directions, max 48h hold)</div>
+    <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss · max 48h hold · $30/trade</div>
     <div>{n_closed} closed · {n_open} open · {cycles_run} cycles</div>
   </footer>
 
@@ -1098,6 +1145,66 @@ if (wGross !== 0 || wFees !== 0 || wGas !== 0) {{
 }} else {{
     document.getElementById('waterfall').parentElement.innerHTML += '<div class="empty-state-small">No trades yet</div>';
 }}
+
+// ── Per-position price trajectory charts ──
+const POSITION_CHARTS = {json.dumps({
+    mid: {
+        "bars": v["bars"],
+        "entry_ts": v["entry_ts"],
+        "entry_price": v["entry_price"],
+        "entry_mid": v["entry_mid"],
+        "direction": v["direction"],
+        "entry_z": v["entry_z"],
+    } for mid, v in position_charts.items()
+}, default=str)};
+
+Object.keys(POSITION_CHARTS).forEach(mid => {{
+    const data = POSITION_CHARTS[mid];
+    const el = document.getElementById('poschart_' + mid);
+    if (!el || !data || !data.bars || data.bars.length < 2) return;
+    const labels = data.bars.map(b => {{
+        const d = new Date(b.t * 1000);
+        return (d.getUTCMonth()+1) + '-' + String(d.getUTCDate()).padStart(2,'0') + ' ' + String(d.getUTCHours()).padStart(2,'0') + ':00';
+    }});
+    const prices = data.bars.map(b => b.p);
+    // Find entry index (closest bar)
+    let entryIdx = 0;
+    for (let i = 0; i < data.bars.length; i++) {{
+        if (data.bars[i].t >= data.entry_ts) {{ entryIdx = i; break; }}
+    }}
+    const isLong = data.direction === 1;
+    const color = isLong ? DARK.green : DARK.red;
+    // Datasets: price line + entry-price horizontal line + entry vertical marker (via dataset of single point)
+    const entryLine = prices.map(() => data.entry_price);
+    const entryMarker = prices.map((_, i) => i === entryIdx ? data.entry_mid : null);
+    new Chart(el, {{
+        type: 'line',
+        data: {{
+            labels: labels,
+            datasets: [
+                {{ data: prices, borderColor: DARK.blue, backgroundColor: DARK.blue + '15', fill: false, pointRadius: 0, borderWidth: 1.5 }},
+                {{ data: entryLine, borderColor: color, borderDash: [3, 3], pointRadius: 0, fill: false, borderWidth: 1 }},
+                {{ data: entryMarker, borderColor: color, backgroundColor: color, pointRadius: 5, pointStyle: 'triangle', showLine: false }},
+            ]
+        }},
+        options: {{
+            responsive: true, maintainAspectRatio: false,
+            plugins: {{
+                legend: {{ display: false }},
+                tooltip: {{
+                    mode: 'index', intersect: false,
+                    backgroundColor: '#0a0e14', borderColor: DARK.border, borderWidth: 1,
+                    titleColor: DARK.text, bodyColor: DARK.text, padding: 8,
+                    filter: (ctx) => ctx.datasetIndex === 0,
+                }},
+            }},
+            scales: {{
+                x: {{ ticks: {{ maxTicksLimit: 6, font: {{ size: 9 }} }} }},
+                y: {{ ticks: {{ font: {{ size: 9 }}, callback: (v) => v.toFixed(2) }} }},
+            }},
+        }}
+    }});
+}});
 
 // ── Sparklines (inside hero cells) ──
 const sparkOpts = {{
