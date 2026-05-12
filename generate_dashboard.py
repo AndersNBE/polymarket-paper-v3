@@ -20,17 +20,14 @@ CYCLES_FILE = HERE / "paper_cycles.jsonl"
 OUT = HERE / "dashboard.html"
 
 # V3 expectations — UNKNOWN (this is the actual test)
-# The critic's hypothesis: V1's edge was resolution-gambling on <7d markets,
-# not actual mean reversion. V3 removes those and adds stop-loss.
-# These targets are placeholders; CLV positive after 30+ trades = some real edge.
-EXP_AVG_TRADE = 0.0   # unknown
-EXP_WIN_RATE = 50.0   # 50% is coin-flip baseline; >50% would suggest edge
+EXP_AVG_TRADE = 0.0   # unknown — we'll measure
+EXP_WIN_RATE = 50.0   # 50% is coin-flip baseline
 EXP_STD = 50.0        # unknown
 EXP_CLV = 0.5         # ≥0.5¢ with confidence = mean reversion edge confirmed
-EXP_TRADES_PER_DAY = 0.5  # realistic estimate (was 3.0 in V1, critic correctly flagged)
+EXP_TRADES_PER_DAY = 0.5  # honest estimate based on backtest_v3
 BANKROLL_USD = 720
 STAKE = 30
-STRATEGY_LABEL = "V3 — dte>=30 + stop-loss"
+STRATEGY_LABEL = "V3 — dte>=30 + no stop-loss"
 
 def load_jsonl(path):
     out = []
@@ -654,7 +651,8 @@ html = f"""<!DOCTYPE html>
   .card:hover {{ border-color: var(--border-strong); }}
 
   /* Sparkline (inside hero cell) */
-  .sparkline {{ width: 100%; height: 30px; margin-top: 12px; opacity: 0.85; }}
+  .sparkline {{ width: 100% !important; height: 30px !important; max-height: 30px; margin-top: 12px; opacity: 0.85; display: block; }}
+  .sparkline-wrap {{ position: relative; height: 30px; margin-top: 12px; overflow: hidden; }}
 
   /* Trade tape */
   .tape-row {{ display: flex; gap: 4px; flex-wrap: wrap; padding: 4px 0; }}
@@ -695,7 +693,7 @@ html = f"""<!DOCTYPE html>
     <div class="logo">
       <div class="logo-mark">P</div>
       <div class="logo-text">
-        <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
+        <h1>Polymarket Paper Trader</h1>
         <div class="sub">{now_str} · Cycle #{cycles_run} · Started {started_at[:10] if started_at != '—' else '—'}</div>
       </div>
     </div>
@@ -722,25 +720,25 @@ html = f"""<!DOCTYPE html>
       <div class="hero-label">Net PnL</div>
       <div class="hero-value mono animated-num" data-target="{total_pnl}" data-prefix="$" data-prec="2" style="color:{color_for(total_pnl)}">${total_pnl:+.2f}</div>
       <div class="hero-sub">{n_closed} trades · ${total_fees:.2f} fees paid · ${'+' if total_pnl-total_fees > 0 else ''}${total_pnl + total_fees:.2f} before fees</div>
-      <canvas class="sparkline" id="spark_equity"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_equity" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
       <div class="hero-label">Avg CLV ★</div>
       <div class="hero-value mono" style="color:{color_for(avg_clv)}">{avg_clv*100:+.2f}¢</div>
       <div class="hero-sub">{n_with_clv} measured · {clv_winrate:.0f}% positive · target +{EXP_CLV:.1f}¢</div>
-      <canvas class="sparkline" id="spark_clv"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_clv" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
       <div class="hero-label">Win Rate</div>
       <div class="hero-value mono">{win_rate:.1f}<span style="font-size:18px;color:var(--text-dim)">%</span></div>
       <div class="hero-sub">{wins}/{n_closed} · expected ~{EXP_WIN_RATE}%</div>
-      <canvas class="sparkline" id="spark_winrate"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_winrate" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
       <div class="hero-label">Open Positions</div>
       <div class="hero-value mono">{n_open}<span style="font-size:18px;color:var(--text-dim)">/10</span></div>
       <div class="hero-sub">${total_deployed:.0f} deployed of ${BANKROLL_USD}</div>
-      <canvas class="sparkline" id="spark_pos"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_pos" width="200" height="30"></canvas></div>
     </div>
   </div>
 
@@ -972,7 +970,7 @@ html = f"""<!DOCTYPE html>
   </div>
 
   <footer>
-    <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss (backtest showed it hurts) · max 48h hold · $30/trade</div>
+    <div>Auto-refresh 60s · v1 strategy (z≥5, both directions, max 48h hold)</div>
     <div>{n_closed} closed · {n_open} open · {cycles_run} cycles</div>
   </footer>
 
@@ -1109,8 +1107,14 @@ const sparkOpts = {{
     elements: {{ point: {{ radius: 0 }}, line: {{ borderWidth: 1.5, tension: 0.4 }} }}
 }};
 function mkSpark(id, data, color) {{
-    if (!data || data.length < 2) return;
-    new Chart(document.getElementById(id), {{
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!data || data.length < 2) {{
+        // Hide sparkline wrapper if no data (prevents canvas blowup)
+        if (el.parentElement) el.parentElement.style.display = 'none';
+        return;
+    }}
+    new Chart(el, {{
         type: 'line',
         data: {{ labels: data.map((_, i) => i), datasets: [{{ data: data, borderColor: color, backgroundColor: color + '20', fill: true }}] }},
         options: sparkOpts

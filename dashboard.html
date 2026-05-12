@@ -146,7 +146,8 @@
   .card:hover { border-color: var(--border-strong); }
 
   /* Sparkline (inside hero cell) */
-  .sparkline { width: 100%; height: 30px; margin-top: 12px; opacity: 0.85; }
+  .sparkline { width: 100% !important; height: 30px !important; max-height: 30px; margin-top: 12px; opacity: 0.85; display: block; }
+  .sparkline-wrap { position: relative; height: 30px; margin-top: 12px; overflow: hidden; }
 
   /* Trade tape */
   .tape-row { display: flex; gap: 4px; flex-wrap: wrap; padding: 4px 0; }
@@ -187,15 +188,15 @@
     <div class="logo">
       <div class="logo-mark">P</div>
       <div class="logo-text">
-        <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
-        <div class="sub">2026-05-12 19:07:20 UTC · Cycle #1 · Started 2026-05-12</div>
+        <h1>Polymarket Paper Trader</h1>
+        <div class="sub">2026-05-12 19:25:43 UTC · Cycle #1 · Started 2026-05-12</div>
       </div>
     </div>
     <div class="live-pill">
       <span class="live-dot"></span>
       <span style="color:#3fb950;font-weight:600">LIVE</span>
       <span style="color:var(--text-mute)">·</span>
-      <span style="color:var(--text-dim)">0m ago</span>
+      <span style="color:var(--text-dim)">19m ago</span>
     </div>
   </header>
 
@@ -214,25 +215,25 @@
       <div class="hero-label">Net PnL</div>
       <div class="hero-value mono animated-num" data-target="0" data-prefix="$" data-prec="2" style="color:#7d8590">$+0.00</div>
       <div class="hero-sub">0 trades · $0.00 fees paid · $$0.00 before fees</div>
-      <canvas class="sparkline" id="spark_equity"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_equity" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
       <div class="hero-label">Avg CLV ★</div>
       <div class="hero-value mono" style="color:#7d8590">+0.00¢</div>
       <div class="hero-sub">0 measured · 0% positive · target +0.5¢</div>
-      <canvas class="sparkline" id="spark_clv"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_clv" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
       <div class="hero-label">Win Rate</div>
       <div class="hero-value mono">0.0<span style="font-size:18px;color:var(--text-dim)">%</span></div>
       <div class="hero-sub">0/0 · expected ~50.0%</div>
-      <canvas class="sparkline" id="spark_winrate"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_winrate" width="200" height="30"></canvas></div>
     </div>
     <div class="hero-cell">
       <div class="hero-label">Open Positions</div>
       <div class="hero-value mono">1<span style="font-size:18px;color:var(--text-dim)">/10</span></div>
       <div class="hero-sub">$32 deployed of $720</div>
-      <canvas class="sparkline" id="spark_pos"></canvas>
+      <div class="sparkline-wrap"><canvas class="sparkline" id="spark_pos" width="200" height="30"></canvas></div>
     </div>
   </div>
 
@@ -396,7 +397,7 @@
             <div class="pos-stat"><span class="pos-stat-label">Entry</span><span class="pos-stat-val">$0.210</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Spread</span><span class="pos-stat-val">1.0¢</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Stake</span><span class="pos-stat-val">$32</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">0.0h</span></div>
+            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">0.3h</span></div>
             <div class="pos-stat"><span class="pos-stat-label">DTE</span><span class="pos-stat-val">232d</span></div>
             <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val" style="color:#7d8590">pending</span></div>
             <div class="pos-stat"><span class="pos-stat-label">Category</span><span class="pos-stat-val">finance</span></div>
@@ -489,7 +490,7 @@
   </div>
 
   <footer>
-    <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss (backtest showed it hurts) · max 48h hold · $30/trade</div>
+    <div>Auto-refresh 60s · v1 strategy (z≥5, both directions, max 48h hold)</div>
     <div>0 closed · 1 open · 1 cycles</div>
   </footer>
 
@@ -626,8 +627,14 @@ const sparkOpts = {
     elements: { point: { radius: 0 }, line: { borderWidth: 1.5, tension: 0.4 } }
 };
 function mkSpark(id, data, color) {
-    if (!data || data.length < 2) return;
-    new Chart(document.getElementById(id), {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!data || data.length < 2) {
+        // Hide sparkline wrapper if no data (prevents canvas blowup)
+        if (el.parentElement) el.parentElement.style.display = 'none';
+        return;
+    }
+    new Chart(el, {
         type: 'line',
         data: { labels: data.map((_, i) => i), datasets: [{ data: data, borderColor: color, backgroundColor: color + '20', fill: true }] },
         options: sparkOpts
