@@ -22,11 +22,16 @@ CYCLES_FILE = HERE / "paper_cycles.jsonl"
 OUT = HERE / "dashboard.html"
 
 # V3 expectations — UNKNOWN
-EXP_AVG_TRADE = 0.0
-EXP_WIN_RATE = 50.0
-EXP_STD = 50.0
-EXP_CLV = 0.5
-EXP_TRADES_PER_DAY = 0.5
+# Backtest expectations — V3 strategy on low-vol universe WITH max_slippage_for_entry=2¢
+# (analyze_slippage_filter.py v3). At T=2¢ only n=1 trade survives in 621 days
+# (too small) so values are derived from the T=4¢ sample (n=5, mean +$4.98 on $30
+# stake, 80% win rate) as a more representative-but-still-tentative estimate.
+# Values are per $100 stake; dashboard scales by STAKE/100. LOW-CONFIDENCE.
+EXP_AVG_TRADE = 5.0
+EXP_WIN_RATE = 70.0
+EXP_STD = 22.0
+EXP_CLV = 1.0
+EXP_TRADES_PER_DAY = 0.3
 BANKROLL_USD = 720
 STAKE = 30
 STRATEGY_LABEL = "V3 — dte>=30 + no stop-loss"
