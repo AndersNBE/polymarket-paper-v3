@@ -165,6 +165,10 @@
   /* Position chart per open position */
   .pos-chart-wrap { position: relative; height: 120px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
   .pos-chart { width: 100% !important; height: 110px !important; max-height: 110px; display: block; }
+  .closed-card { background: var(--surface); }
+  .closed-card .pos-card-top { align-items: center; }
+  .exit-reason { font-size: 11px; color: var(--text-dim); margin-top: 10px; padding: 6px 10px; background: var(--surface-2); border-radius: 6px; border-left: 2px solid var(--text-mute); }
+  .exit-reason strong { color: var(--text); }
 
   /* Animated numbers — initial fade in */
   .animated-num { animation: fadeUp 0.6s ease-out; }
@@ -193,14 +197,14 @@
       <div class="logo-mark">P</div>
       <div class="logo-text">
         <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
-        <div class="sub">2026-05-12 21:03:56 UTC · Cycle #8 · Started 2026-05-12</div>
+        <div class="sub">2026-05-12 21:05:21 UTC · Cycle #8 · Started 2026-05-12</div>
       </div>
     </div>
     <div class="live-pill">
       <span class="live-dot"></span>
       <span style="color:#3fb950;font-weight:600">LIVE</span>
       <span style="color:var(--text-mute)">·</span>
-      <span style="color:var(--text-dim)">0m ago</span>
+      <span style="color:var(--text-dim)">1m ago</span>
     </div>
   </header>
 
@@ -443,6 +447,9 @@
         <div class="pos-chart-wrap"><canvas class="pos-chart" id="poschart_670058" width="600" height="120"></canvas></div>
     </div>
   </div>
+
+  <!-- RECENTLY CLOSED POSITIONS WITH CHARTS -->
+  
 
   <!-- BOT HEALTH + LIFETIME STATS -->
   <div class="row-2-1">
@@ -722,7 +729,7 @@ if (wGross !== 0 || wFees !== 0 || wGas !== 0) {
 }
 
 // ── Per-position price trajectory charts ──
-const POSITION_CHARTS = {"670058": {"bars": [{"t": 1778443209, "p": 0.225}, {"t": 1778446808, "p": 0.225}, {"t": 1778450406, "p": 0.225}, {"t": 1778454006, "p": 0.225}, {"t": 1778457610, "p": 0.225}, {"t": 1778461204, "p": 0.225}, {"t": 1778464820, "p": 0.225}, {"t": 1778468406, "p": 0.225}, {"t": 1778472005, "p": 0.225}, {"t": 1778475606, "p": 0.225}, {"t": 1778479207, "p": 0.225}, {"t": 1778482819, "p": 0.225}, {"t": 1778486405, "p": 0.225}, {"t": 1778490007, "p": 0.225}, {"t": 1778493604, "p": 0.225}, {"t": 1778497216, "p": 0.225}, {"t": 1778500810, "p": 0.225}, {"t": 1778504408, "p": 0.23}, {"t": 1778508005, "p": 0.23}, {"t": 1778511613, "p": 0.23}, {"t": 1778515206, "p": 0.23}, {"t": 1778518808, "p": 0.225}, {"t": 1778522411, "p": 0.245}, {"t": 1778526008, "p": 0.23}, {"t": 1778529606, "p": 0.23}, {"t": 1778533207, "p": 0.23}, {"t": 1778536807, "p": 0.235}, {"t": 1778540407, "p": 0.235}, {"t": 1778544009, "p": 0.235}, {"t": 1778547605, "p": 0.235}, {"t": 1778551206, "p": 0.235}, {"t": 1778554809, "p": 0.235}, {"t": 1778558405, "p": 0.235}, {"t": 1778562008, "p": 0.235}, {"t": 1778565609, "p": 0.235}, {"t": 1778569215, "p": 0.23}, {"t": 1778572808, "p": 0.235}, {"t": 1778576409, "p": 0.235}, {"t": 1778580004, "p": 0.235}, {"t": 1778583606, "p": 0.235}, {"t": 1778587208, "p": 0.235}, {"t": 1778590806, "p": 0.235}, {"t": 1778594407, "p": 0.235}, {"t": 1778598009, "p": 0.225}, {"t": 1778601606, "p": 0.225}, {"t": 1778605227, "p": 0.225}, {"t": 1778608808, "p": 0.21}, {"t": 1778612409, "p": 0.195}, {"t": 1778616009, "p": 0.19}, {"t": 1778619607, "p": 0.195}, {"t": 1778619788, "p": 0.195}], "entry_ts": 1778612816, "entry_price": 0.21000000000000002, "entry_mid": 0.195, "direction": 1, "entry_z": -6.424692976469554}, "665513": {"bars": [{"t": 1778443213, "p": 0.135}, {"t": 1778446813, "p": 0.135}, {"t": 1778450409, "p": 0.135}, {"t": 1778454013, "p": 0.135}, {"t": 1778457612, "p": 0.135}, {"t": 1778461205, "p": 0.135}, {"t": 1778464821, "p": 0.135}, {"t": 1778468408, "p": 0.135}, {"t": 1778472006, "p": 0.135}, {"t": 1778475607, "p": 0.135}, {"t": 1778479209, "p": 0.135}, {"t": 1778482820, "p": 0.135}, {"t": 1778486406, "p": 0.135}, {"t": 1778490010, "p": 0.135}, {"t": 1778493606, "p": 0.135}, {"t": 1778497217, "p": 0.135}, {"t": 1778500813, "p": 0.135}, {"t": 1778504410, "p": 0.135}, {"t": 1778508007, "p": 0.135}, {"t": 1778511626, "p": 0.135}, {"t": 1778515207, "p": 0.135}, {"t": 1778518826, "p": 0.135}, {"t": 1778522425, "p": 0.135}, {"t": 1778526013, "p": 0.135}, {"t": 1778529611, "p": 0.135}, {"t": 1778533220, "p": 0.135}, {"t": 1778536814, "p": 0.135}, {"t": 1778540413, "p": 0.135}, {"t": 1778544019, "p": 0.135}, {"t": 1778547607, "p": 0.135}, {"t": 1778551208, "p": 0.135}, {"t": 1778554813, "p": 0.135}, {"t": 1778558407, "p": 0.135}, {"t": 1778562010, "p": 0.135}, {"t": 1778565614, "p": 0.135}, {"t": 1778569218, "p": 0.135}, {"t": 1778572811, "p": 0.135}, {"t": 1778576412, "p": 0.135}, {"t": 1778580006, "p": 0.135}, {"t": 1778583608, "p": 0.145}, {"t": 1778587213, "p": 0.145}, {"t": 1778590808, "p": 0.145}, {"t": 1778594409, "p": 0.145}, {"t": 1778598015, "p": 0.145}, {"t": 1778601608, "p": 0.155}, {"t": 1778605234, "p": 0.155}, {"t": 1778608812, "p": 0.155}, {"t": 1778612411, "p": 0.155}, {"t": 1778616013, "p": 0.27}, {"t": 1778619613, "p": 0.205}, {"t": 1778619790, "p": 0.205}], "entry_ts": 1778614402, "entry_price": 0.1555905433594914, "entry_mid": 0.19, "direction": -1, "entry_z": 6.5016645400270265}, "631120": {"bars": [{"t": 1778446812, "p": 0.255}, {"t": 1778450408, "p": 0.255}, {"t": 1778454011, "p": 0.26}, {"t": 1778457612, "p": 0.26}, {"t": 1778461205, "p": 0.26}, {"t": 1778464821, "p": 0.26}, {"t": 1778468408, "p": 0.26}, {"t": 1778472006, "p": 0.26}, {"t": 1778475606, "p": 0.255}, {"t": 1778479208, "p": 0.255}, {"t": 1778482820, "p": 0.255}, {"t": 1778486406, "p": 0.255}, {"t": 1778490009, "p": 0.26}, {"t": 1778493605, "p": 0.26}, {"t": 1778497216, "p": 0.26}, {"t": 1778500812, "p": 0.255}, {"t": 1778504409, "p": 0.25}, {"t": 1778508006, "p": 0.25}, {"t": 1778511624, "p": 0.25}, {"t": 1778515207, "p": 0.25}, {"t": 1778518818, "p": 0.25}, {"t": 1778522415, "p": 0.25}, {"t": 1778526011, "p": 0.25}, {"t": 1778529610, "p": 0.25}, {"t": 1778533215, "p": 0.25}, {"t": 1778536813, "p": 0.25}, {"t": 1778540411, "p": 0.25}, {"t": 1778544017, "p": 0.25}, {"t": 1778547607, "p": 0.25}, {"t": 1778551208, "p": 0.25}, {"t": 1778554812, "p": 0.25}, {"t": 1778558406, "p": 0.25}, {"t": 1778562010, "p": 0.25}, {"t": 1778565613, "p": 0.255}, {"t": 1778569218, "p": 0.255}, {"t": 1778572810, "p": 0.255}, {"t": 1778576412, "p": 0.255}, {"t": 1778580006, "p": 0.255}, {"t": 1778583607, "p": 0.255}, {"t": 1778587212, "p": 0.255}, {"t": 1778590807, "p": 0.255}, {"t": 1778594409, "p": 0.255}, {"t": 1778598014, "p": 0.255}, {"t": 1778601607, "p": 0.255}, {"t": 1778605232, "p": 0.255}, {"t": 1778608811, "p": 0.255}, {"t": 1778612411, "p": 0.235}, {"t": 1778616012, "p": 0.23}, {"t": 1778619611, "p": 0.22}, {"t": 1778619789, "p": 0.22}], "entry_ts": 1778617091, "entry_price": 0.2690947841155396, "entry_mid": 0.22, "direction": 1, "entry_z": -5.068030337996148}};
+const POSITION_CHARTS = {"670058": {"bars": [{"t": 1778572808, "p": 0.235}, {"t": 1778576409, "p": 0.235}, {"t": 1778580004, "p": 0.235}, {"t": 1778583606, "p": 0.235}, {"t": 1778587208, "p": 0.235}, {"t": 1778590806, "p": 0.235}, {"t": 1778594407, "p": 0.235}, {"t": 1778598009, "p": 0.225}, {"t": 1778601606, "p": 0.225}, {"t": 1778605227, "p": 0.225}, {"t": 1778608808, "p": 0.21}, {"t": 1778612409, "p": 0.195}, {"t": 1778616009, "p": 0.19}, {"t": 1778619607, "p": 0.195}, {"t": 1778619788, "p": 0.195}], "entry_ts": 1778612816, "entry_price": 0.21000000000000002, "entry_mid": 0.195, "direction": 1, "entry_z": -6.424692976469554}, "665513": {"bars": [{"t": 1778572811, "p": 0.135}, {"t": 1778576412, "p": 0.135}, {"t": 1778580006, "p": 0.135}, {"t": 1778583608, "p": 0.145}, {"t": 1778587213, "p": 0.145}, {"t": 1778590808, "p": 0.145}, {"t": 1778594409, "p": 0.145}, {"t": 1778598015, "p": 0.145}, {"t": 1778601608, "p": 0.155}, {"t": 1778605234, "p": 0.155}, {"t": 1778608812, "p": 0.155}, {"t": 1778612411, "p": 0.155}, {"t": 1778616013, "p": 0.27}, {"t": 1778619613, "p": 0.205}, {"t": 1778619846, "p": 0.205}], "entry_ts": 1778614402, "entry_price": 0.1555905433594914, "entry_mid": 0.19, "direction": -1, "entry_z": 6.5016645400270265}, "631120": {"bars": [{"t": 1778576412, "p": 0.255}, {"t": 1778580006, "p": 0.255}, {"t": 1778583607, "p": 0.255}, {"t": 1778587212, "p": 0.255}, {"t": 1778590807, "p": 0.255}, {"t": 1778594409, "p": 0.255}, {"t": 1778598014, "p": 0.255}, {"t": 1778601607, "p": 0.255}, {"t": 1778605232, "p": 0.255}, {"t": 1778608811, "p": 0.255}, {"t": 1778612411, "p": 0.235}, {"t": 1778616012, "p": 0.23}, {"t": 1778619611, "p": 0.22}, {"t": 1778619846, "p": 0.22}], "entry_ts": 1778617091, "entry_price": 0.2690947841155396, "entry_mid": 0.22, "direction": 1, "entry_z": -5.068030337996148}};
 
 Object.keys(POSITION_CHARTS).forEach(mid => {
     const data = POSITION_CHARTS[mid];
@@ -763,6 +770,51 @@ Object.keys(POSITION_CHARTS).forEach(mid => {
                     titleColor: DARK.text, bodyColor: DARK.text, padding: 8,
                     filter: (ctx) => ctx.datasetIndex === 0,
                 },
+            },
+            scales: {
+                x: { ticks: { maxTicksLimit: 6, font: { size: 9 } } },
+                y: { ticks: { font: { size: 9 }, callback: (v) => v.toFixed(2) } },
+            },
+        }
+    });
+});
+
+// ── Per-CLOSED-position charts with entry+exit markers ──
+const CLOSED_CHARTS = [];
+CLOSED_CHARTS.forEach(d => {
+    const el = document.getElementById(d.id);
+    if (!el || !d.bars || d.bars.length < 2) return;
+    const labels = d.bars.map(b => {
+        const date = new Date(b.t * 1000);
+        return (date.getUTCMonth()+1) + '-' + String(date.getUTCDate()).padStart(2,'0') + ' ' + String(date.getUTCHours()).padStart(2,'0') + ':00';
+    });
+    const prices = d.bars.map(b => b.p);
+    let entryIdx = 0, exitIdx = d.bars.length - 1;
+    for (let i = 0; i < d.bars.length; i++) {
+        if (d.bars[i].t >= d.entry_ts) { entryIdx = i; break; }
+    }
+    for (let i = 0; i < d.bars.length; i++) {
+        if (d.bars[i].t >= d.exit_ts) { exitIdx = i; break; }
+    }
+    const isLong = d.direction === 1;
+    const pnlColor = d.pnl > 0 ? DARK.green : d.pnl < 0 ? DARK.red : DARK.textMute;
+    const entryMarker = prices.map((_, i) => i === entryIdx ? d.entry_mid : null);
+    const exitMarker = prices.map((_, i) => i === exitIdx ? d.exit_mid : null);
+    new Chart(el, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                { data: prices, borderColor: DARK.blue, backgroundColor: DARK.blue + '15', fill: false, pointRadius: 0, borderWidth: 1.5 },
+                { data: entryMarker, borderColor: DARK.textDim, backgroundColor: DARK.textDim, pointRadius: 6, pointStyle: 'triangle', showLine: false },
+                { data: exitMarker, borderColor: pnlColor, backgroundColor: pnlColor, pointRadius: 6, pointStyle: 'rectRot', showLine: false },
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { mode: 'index', intersect: false, backgroundColor: '#0a0e14', borderColor: DARK.border, borderWidth: 1, padding: 8, filter: (ctx) => ctx.datasetIndex === 0 },
             },
             scales: {
                 x: { ticks: { maxTicksLimit: 6, font: { size: 9 } } },
