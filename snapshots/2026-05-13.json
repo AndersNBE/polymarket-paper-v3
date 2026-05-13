@@ -1,0 +1,20 @@
+{
+  "date": "2026-05-13",
+  "ts": 1778630590,
+  "cycle": 19,
+  "universe_size": 3177,
+  "open_positions_count": 1,
+  "open_positions_summary": [
+    {
+      "market_id": "670058",
+      "question": "NYSE marketwide circuit breaker before 2027?",
+      "entry_z": -6.424692976469554,
+      "entry_exec_price": 0.21000000000000002,
+      "direction": 1,
+      "shares": 150.0,
+      "held_hours": 4.937222222222222,
+      "clv_value": -0.0050000000000000044,
+      "dte": 232.2035185185185
+    }
+  ]
+}
