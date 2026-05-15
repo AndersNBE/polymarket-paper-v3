@@ -1,0 +1,34 @@
+{
+  "date": "2026-05-15",
+  "ts": 1778803248,
+  "cycle": 222,
+  "universe_size": 10,
+  "open_positions_count": 2,
+  "open_positions_summary": [
+    {
+      "market_id": "2036580",
+      "question": "Will Munetaka Murakami hit the most home runs during the 2026 MLB regular season?",
+      "entry_z": -8.347045628946049,
+      "entry_exec_price": 0.19148820326678764,
+      "direction": 1,
+      "shares": 165.3,
+      "held_hours": 28.458055555555557,
+      "clv_value": 0.0,
+      "dte": 150.18519675925927
+    },
+    {
+      "market_id": "1395171",
+      "question": "Will Shohei Ohtani win the 2026 NL Cy Young Award?",
+      "entry_z": 6.948536035286209,
+      "entry_exec_price": 0.18481418581418574,
+      "direction": -1,
+      "shares": 36.84662576687116,
+      "held_hours": 18.45888888888889,
+      "clv_value": -0.013499999999999984,
+      "dte": 181.76856481481482
+    }
+  ],
+  "trades_total": 11,
+  "pnl_cumulative": -38.915117892804375,
+  "win_rate": 9.090909090909092
+}
