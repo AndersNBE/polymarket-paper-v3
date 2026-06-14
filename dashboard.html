@@ -199,7 +199,7 @@
       <div class="logo-mark">P</div>
       <div class="logo-text">
         <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
-        <div class="sub">2026-06-14 12:04:53 UTC · Cycle #733 · Started 2026-05-12</div>
+        <div class="sub">2026-06-14 15:52:06 UTC · Cycle #734 · Started 2026-05-12</div>
       </div>
     </div>
     <div class="live-pill">
@@ -404,7 +404,7 @@
     <div class="card" style="margin-bottom:14px">
         <div class="card-title">
             <div class="card-title-row">📜 Recently closed (with trajectory + exit reason)</div>
-            <span style="color:var(--text-mute);font-size:11px">last 6</span>
+            <span style="color:var(--text-mute);font-size:11px">last 5</span>
         </div>
         
     <div class="pos-card closed-card">
@@ -492,23 +492,6 @@
         <div class="exit-reason">Exit: <strong>z_revert</strong> — z reverted below 0.5σ — mean reversion completed</div>
         <div class="pos-chart-wrap"><canvas class="pos-chart" id="closedchart_898654_1778764538" width="600" height="120"></canvas></div>
     </div>
-    <div class="pos-card closed-card">
-        <div class="pos-card-top">
-            <div class="pos-question">US federally charges Cuba leader Miguel Diaz-Canel?</div>
-            <div class="pos-pnl" style="color:#f85149;font-weight:600;font-size:15px">$-1.82</div>
-        </div>
-        <div class="pos-stats">
-            <div class="pos-stat"><span class="pos-stat-label">z entry</span><span class="pos-stat-val">+9.69σ</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Dir</span><span class="pos-stat-val" style="color:#f85149">SHORT</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Fill in→out</span><span class="pos-stat-val">0.330→0.346</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">3.2h</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val">+8.50¢</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Fees</span><span class="pos-stat-val">$1.11</span></div>
-        </div>
-        <div class="spread-row" style="color:#f85149"><span>Spread cost:</span> entry mid 0.345→fill 0.330 (-1.5¢) · exit mid 0.215→fill 0.346 (+13.1¢)</div>
-        <div class="exit-reason">Exit: <strong>z_revert</strong> — z reverted below 0.5σ — mean reversion completed</div>
-        <div class="pos-chart-wrap"><canvas class="pos-chart" id="closedchart_1542029_1778731375" width="600" height="120"></canvas></div>
-    </div>
     </div>
 
   <!-- BOT HEALTH + LIFETIME STATS -->
@@ -524,6 +507,15 @@
             <tr><th>Time</th><th>Cycle</th><th class="num">Markets</th><th class="num">Signals</th><th class="num">Opened</th><th class="num">Closed</th><th>Filters</th></tr>
           </thead>
           <tbody>
+        <tr>
+            <td class="mono">06-14 15:52</td>
+            <td class="mono">#734</td>
+            <td class="mono num">8</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td><span class="chip">no signal: 7</span> <span class="chip">z too low: 1</span></td>
+        </tr>
         <tr>
             <td class="mono">06-14 12:04</td>
             <td class="mono">#733</td>
@@ -694,15 +686,6 @@
             <td class="mono num" style="color:#7d8590">0</td>
             <td class="mono num" style="color:#7d8590">0</td>
             <td><span class="chip">no signal: 5</span> <span class="chip">z too low: 5</span></td>
-        </tr>
-        <tr>
-            <td class="mono">06-11 16:16</td>
-            <td class="mono">#714</td>
-            <td class="mono num">11</td>
-            <td class="mono num" style="color:#7d8590">0</td>
-            <td class="mono num" style="color:#7d8590">0</td>
-            <td class="mono num" style="color:#7d8590">0</td>
-            <td><span class="chip">no signal: 7</span> <span class="chip">z too low: 4</span></td>
         </tr></tbody>
         </table>
       </div>
@@ -711,12 +694,12 @@
     <div class="card">
       <div class="card-title">📊 Lifetime totals</div>
       <div style="display:grid;grid-template-columns:1fr;gap:12px;font-size:13px">
-        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Markets scanned</div><div class="mono" style="font-size:22px;font-weight:600">521,198</div></div>
+        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Markets scanned</div><div class="mono" style="font-size:22px;font-weight:600">521,206</div></div>
         <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">z≥5 signals seen</div><div class="mono" style="font-size:22px;font-weight:600">2160</div></div>
         <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Conversion (signals → entries)</div><div class="mono" style="font-size:22px;font-weight:600">0.7%</div></div>
         <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Filter rejection split</div>
           <div style="margin-top:4px">
-            <span class="chip" style="margin:2px 4px 2px 0">no signal: <strong style="color:var(--text)">284,573</strong></span><span class="chip" style="margin:2px 4px 2px 0">z too low: <strong style="color:var(--text)">221,553</strong></span><span class="chip" style="margin:2px 4px 2px 0">no history: <strong style="color:var(--text)">12,912</strong></span><span class="chip" style="margin:2px 4px 2px 0">dte filter: <strong style="color:var(--text)">1,122</strong></span><span class="chip" style="margin:2px 4px 2px 0">price boundary: <strong style="color:var(--text)">807</strong></span><span class="chip" style="margin:2px 4px 2px 0">entry failed book: <strong style="color:var(--text)">215</strong></span>
+            <span class="chip" style="margin:2px 4px 2px 0">no signal: <strong style="color:var(--text)">284,580</strong></span><span class="chip" style="margin:2px 4px 2px 0">z too low: <strong style="color:var(--text)">221,554</strong></span><span class="chip" style="margin:2px 4px 2px 0">no history: <strong style="color:var(--text)">12,912</strong></span><span class="chip" style="margin:2px 4px 2px 0">dte filter: <strong style="color:var(--text)">1,122</strong></span><span class="chip" style="margin:2px 4px 2px 0">price boundary: <strong style="color:var(--text)">807</strong></span><span class="chip" style="margin:2px 4px 2px 0">entry failed book: <strong style="color:var(--text)">215</strong></span>
           </div>
         </div>
       </div>
@@ -992,7 +975,7 @@
 
   <footer>
     <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss · max 48h hold · $30/trade</div>
-    <div>13 closed · 0 open · 733 cycles</div>
+    <div>13 closed · 0 open · 734 cycles</div>
   </footer>
 
 </div>
@@ -1174,7 +1157,7 @@ Object.keys(POSITION_CHARTS).forEach(mid => {
 });
 
 // ── Per-CLOSED-position charts with entry+exit markers ──
-const CLOSED_CHARTS = [{"id": "closedchart_1395171_1778857248", "bars": [{"t": 1778763610, "p": 0.202}, {"t": 1778767210, "p": 0.202}, {"t": 1778770809, "p": 0.24}, {"t": 1778774408, "p": 0.2395}, {"t": 1778778017, "p": 0.2445}, {"t": 1778781621, "p": 0.232}, {"t": 1778785216, "p": 0.234}, {"t": 1778788809, "p": 0.2335}, {"t": 1778792414, "p": 0.2335}, {"t": 1778796013, "p": 0.234}, {"t": 1778799610, "p": 0.2335}, {"t": 1778803212, "p": 0.2335}, {"t": 1778806810, "p": 0.2335}, {"t": 1778810409, "p": 0.2335}, {"t": 1778814012, "p": 0.2335}, {"t": 1778817608, "p": 0.234}, {"t": 1778821213, "p": 0.234}, {"t": 1778824813, "p": 0.2335}, {"t": 1778828407, "p": 0.234}, {"t": 1778832010, "p": 0.2495}, {"t": 1778835609, "p": 0.2585}, {"t": 1778839210, "p": 0.2595}, {"t": 1778842811, "p": 0.26}, {"t": 1778846414, "p": 0.261}, {"t": 1778850016, "p": 0.261}, {"t": 1778857217, "p": 0.237}, {"t": 1778860814, "p": 0.229}, {"t": 1778864407, "p": 0.2315}, {"t": 1778868013, "p": 0.2325}, {"t": 1778871609, "p": 0.247}, {"t": 1778875209, "p": 0.244}, {"t": 1778878812, "p": 0.2485}, {"t": 1778882408, "p": 0.2475}, {"t": 1778886010, "p": 0.242}, {"t": 1778889619, "p": 0.239}, {"t": 1778893211, "p": 0.2155}, {"t": 1778896807, "p": 0.2155}, {"t": 1778900423, "p": 0.2145}], "entry_ts": 1778736796, "exit_ts": 1778857248, "entry_price": 0.18481418581418574, "exit_price": 0.25806632790637757, "entry_mid": 0.1965, "exit_mid": 0.237, "direction": -1, "pnl": -3.377279927838366}, {"id": "closedchart_2036580_1778842849", "bars": [{"t": 1778763611, "p": 0.175}, {"t": 1778767210, "p": 0.175}, {"t": 1778770810, "p": 0.145}, {"t": 1778774409, "p": 0.145}, {"t": 1778778017, "p": 0.145}, {"t": 1778781621, "p": 0.145}, {"t": 1778785217, "p": 0.16}, {"t": 1778788809, "p": 0.145}, {"t": 1778792414, "p": 0.155}, {"t": 1778796013, "p": 0.15}, {"t": 1778799610, "p": 0.145}, {"t": 1778803213, "p": 0.145}, {"t": 1778806810, "p": 0.145}, {"t": 1778810409, "p": 0.145}, {"t": 1778814013, "p": 0.145}, {"t": 1778817608, "p": 0.145}, {"t": 1778821214, "p": 0.145}, {"t": 1778824814, "p": 0.145}, {"t": 1778828407, "p": 0.145}, {"t": 1778832010, "p": 0.145}, {"t": 1778835610, "p": 0.145}, {"t": 1778839210, "p": 0.145}, {"t": 1778842811, "p": 0.145}, {"t": 1778846415, "p": 0.145}, {"t": 1778850017, "p": 0.145}, {"t": 1778857218, "p": 0.145}, {"t": 1778860815, "p": 0.14}, {"t": 1778864407, "p": 0.14}, {"t": 1778868014, "p": 0.14}, {"t": 1778871610, "p": 0.14}, {"t": 1778875210, "p": 0.14}, {"t": 1778878813, "p": 0.14}, {"t": 1778882408, "p": 0.14}, {"t": 1778886010, "p": 0.14}], "entry_ts": 1778700799, "exit_ts": 1778842849, "entry_price": 0.19148820326678764, "exit_price": 0.1199999999999999, "entry_mid": 0.175, "exit_mid": 0.145, "direction": 1, "pnl": -13.408425117059906}, {"id": "closedchart_2127064_1778781647", "bars": [{"t": 1778763609, "p": 0.125}, {"t": 1778767208, "p": 0.148}, {"t": 1778770807, "p": 0.148}, {"t": 1778774407, "p": 0.15}, {"t": 1778778010, "p": 0.153}, {"t": 1778781612, "p": 0.154}, {"t": 1778785212, "p": 0.1545}, {"t": 1778788807, "p": 0.148}, {"t": 1778792411, "p": 0.1475}, {"t": 1778796008, "p": 0.155}, {"t": 1778799609, "p": 0.147}, {"t": 1778803209, "p": 0.147}, {"t": 1778806808, "p": 0.144}, {"t": 1778810407, "p": 0.169}, {"t": 1778814008, "p": 0.1665}, {"t": 1778817606, "p": 0.165}, {"t": 1778821211, "p": 0.1625}, {"t": 1778824809, "p": 0.166}], "entry_ts": 1778723301, "exit_ts": 1778781647, "entry_price": 0.168, "exit_price": 0.125, "entry_mid": 0.1545, "exit_mid": 0.154, "direction": 1, "pnl": -9.814857485029941}, {"id": "closedchart_909766_1778774460", "bars": [{"t": 1778763611, "p": 0.705}, {"t": 1778767210, "p": 0.68}, {"t": 1778770810, "p": 0.68}, {"t": 1778774409, "p": 0.665}, {"t": 1778778017, "p": 0.665}, {"t": 1778781622, "p": 0.665}, {"t": 1778785217, "p": 0.665}, {"t": 1778788809, "p": 0.66}, {"t": 1778792415, "p": 0.665}, {"t": 1778796014, "p": 0.665}, {"t": 1778799611, "p": 0.665}, {"t": 1778803213, "p": 0.66}, {"t": 1778806810, "p": 0.67}, {"t": 1778810409, "p": 0.67}, {"t": 1778814013, "p": 0.67}, {"t": 1778817608, "p": 0.675}], "entry_ts": 1778728685, "exit_ts": 1778774460, "entry_price": 0.64, "exit_price": 0.6900000000000001, "entry_mid": 0.655, "exit_mid": 0.665, "direction": -1, "pnl": -7.251514285714292}, {"id": "closedchart_898654_1778764538", "bars": [{"t": 1778763610, "p": 0.69}, {"t": 1778767209, "p": 0.69}, {"t": 1778770808, "p": 0.705}, {"t": 1778774407, "p": 0.705}, {"t": 1778778013, "p": 0.705}, {"t": 1778781616, "p": 0.705}, {"t": 1778785214, "p": 0.705}, {"t": 1778788808, "p": 0.705}, {"t": 1778792412, "p": 0.705}, {"t": 1778796010, "p": 0.705}, {"t": 1778799609, "p": 0.705}, {"t": 1778803211, "p": 0.705}, {"t": 1778806809, "p": 0.705}], "entry_ts": 1778700799, "exit_ts": 1778764538, "entry_price": 0.7053642384105959, "exit_price": 0.67, "entry_mid": 0.705, "exit_mid": 0.69, "direction": 1, "pnl": -2.5659171996215644}, {"id": "closedchart_1542029_1778731375", "bars": [{"t": 1778763610, "p": 0.215}, {"t": 1778767209, "p": 0.21}, {"t": 1778770809, "p": 0.205}, {"t": 1778774408, "p": 0.215}], "entry_ts": 1778719723, "exit_ts": 1778731375, "entry_price": 0.33000000000000007, "exit_price": 0.345625302542237, "entry_mid": 0.345, "exit_mid": 0.215, "direction": -1, "pnl": -1.8234563933468133}];
+const CLOSED_CHARTS = [{"id": "closedchart_1395171_1778857248", "bars": [{"t": 1778774408, "p": 0.2395}, {"t": 1778778017, "p": 0.2445}, {"t": 1778781621, "p": 0.232}, {"t": 1778785216, "p": 0.234}, {"t": 1778788809, "p": 0.2335}, {"t": 1778792414, "p": 0.2335}, {"t": 1778796013, "p": 0.234}, {"t": 1778799610, "p": 0.2335}, {"t": 1778803212, "p": 0.2335}, {"t": 1778806810, "p": 0.2335}, {"t": 1778810409, "p": 0.2335}, {"t": 1778814012, "p": 0.2335}, {"t": 1778817608, "p": 0.234}, {"t": 1778821213, "p": 0.234}, {"t": 1778824813, "p": 0.2335}, {"t": 1778828407, "p": 0.234}, {"t": 1778832010, "p": 0.2495}, {"t": 1778835609, "p": 0.2585}, {"t": 1778839210, "p": 0.2595}, {"t": 1778842811, "p": 0.26}, {"t": 1778846414, "p": 0.261}, {"t": 1778850016, "p": 0.261}, {"t": 1778857217, "p": 0.237}, {"t": 1778860814, "p": 0.229}, {"t": 1778864407, "p": 0.2315}, {"t": 1778868013, "p": 0.2325}, {"t": 1778871609, "p": 0.247}, {"t": 1778875209, "p": 0.244}, {"t": 1778878812, "p": 0.2485}, {"t": 1778882408, "p": 0.2475}, {"t": 1778886010, "p": 0.242}, {"t": 1778889619, "p": 0.239}, {"t": 1778893211, "p": 0.2155}, {"t": 1778896807, "p": 0.2155}, {"t": 1778900423, "p": 0.2145}], "entry_ts": 1778736796, "exit_ts": 1778857248, "entry_price": 0.18481418581418574, "exit_price": 0.25806632790637757, "entry_mid": 0.1965, "exit_mid": 0.237, "direction": -1, "pnl": -3.377279927838366}, {"id": "closedchart_2036580_1778842849", "bars": [{"t": 1778774409, "p": 0.145}, {"t": 1778778017, "p": 0.145}, {"t": 1778781621, "p": 0.145}, {"t": 1778785217, "p": 0.16}, {"t": 1778788809, "p": 0.145}, {"t": 1778792414, "p": 0.155}, {"t": 1778796013, "p": 0.15}, {"t": 1778799610, "p": 0.145}, {"t": 1778803213, "p": 0.145}, {"t": 1778806810, "p": 0.145}, {"t": 1778810409, "p": 0.145}, {"t": 1778814013, "p": 0.145}, {"t": 1778817608, "p": 0.145}, {"t": 1778821214, "p": 0.145}, {"t": 1778824814, "p": 0.145}, {"t": 1778828407, "p": 0.145}, {"t": 1778832010, "p": 0.145}, {"t": 1778835610, "p": 0.145}, {"t": 1778839210, "p": 0.145}, {"t": 1778842811, "p": 0.145}, {"t": 1778846415, "p": 0.145}, {"t": 1778850017, "p": 0.145}, {"t": 1778857218, "p": 0.145}, {"t": 1778860815, "p": 0.14}, {"t": 1778864407, "p": 0.14}, {"t": 1778868014, "p": 0.14}, {"t": 1778871610, "p": 0.14}, {"t": 1778875210, "p": 0.14}, {"t": 1778878813, "p": 0.14}, {"t": 1778882408, "p": 0.14}, {"t": 1778886010, "p": 0.14}], "entry_ts": 1778700799, "exit_ts": 1778842849, "entry_price": 0.19148820326678764, "exit_price": 0.1199999999999999, "entry_mid": 0.175, "exit_mid": 0.145, "direction": 1, "pnl": -13.408425117059906}, {"id": "closedchart_2127064_1778781647", "bars": [{"t": 1778774407, "p": 0.15}, {"t": 1778778010, "p": 0.153}, {"t": 1778781612, "p": 0.154}, {"t": 1778785212, "p": 0.1545}, {"t": 1778788807, "p": 0.148}, {"t": 1778792411, "p": 0.1475}, {"t": 1778796008, "p": 0.155}, {"t": 1778799609, "p": 0.147}, {"t": 1778803209, "p": 0.147}, {"t": 1778806808, "p": 0.144}, {"t": 1778810407, "p": 0.169}, {"t": 1778814008, "p": 0.1665}, {"t": 1778817606, "p": 0.165}, {"t": 1778821211, "p": 0.1625}, {"t": 1778824809, "p": 0.166}], "entry_ts": 1778723301, "exit_ts": 1778781647, "entry_price": 0.168, "exit_price": 0.125, "entry_mid": 0.1545, "exit_mid": 0.154, "direction": 1, "pnl": -9.814857485029941}, {"id": "closedchart_909766_1778774460", "bars": [{"t": 1778774409, "p": 0.665}, {"t": 1778778017, "p": 0.665}, {"t": 1778781622, "p": 0.665}, {"t": 1778785217, "p": 0.665}, {"t": 1778788809, "p": 0.66}, {"t": 1778792415, "p": 0.665}, {"t": 1778796014, "p": 0.665}, {"t": 1778799611, "p": 0.665}, {"t": 1778803213, "p": 0.66}, {"t": 1778806810, "p": 0.67}, {"t": 1778810409, "p": 0.67}, {"t": 1778814013, "p": 0.67}, {"t": 1778817608, "p": 0.675}], "entry_ts": 1778728685, "exit_ts": 1778774460, "entry_price": 0.64, "exit_price": 0.6900000000000001, "entry_mid": 0.655, "exit_mid": 0.665, "direction": -1, "pnl": -7.251514285714292}, {"id": "closedchart_898654_1778764538", "bars": [{"t": 1778774407, "p": 0.705}, {"t": 1778778013, "p": 0.705}, {"t": 1778781616, "p": 0.705}, {"t": 1778785214, "p": 0.705}, {"t": 1778788808, "p": 0.705}, {"t": 1778792412, "p": 0.705}, {"t": 1778796010, "p": 0.705}, {"t": 1778799609, "p": 0.705}, {"t": 1778803211, "p": 0.705}, {"t": 1778806809, "p": 0.705}], "entry_ts": 1778700799, "exit_ts": 1778764538, "entry_price": 0.7053642384105959, "exit_price": 0.67, "entry_mid": 0.705, "exit_mid": 0.69, "direction": 1, "pnl": -2.5659171996215644}];
 CLOSED_CHARTS.forEach(d => {
     const el = document.getElementById(d.id);
     if (!el || !d.bars || d.bars.length < 2) return;
