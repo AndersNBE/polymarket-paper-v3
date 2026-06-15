@@ -199,7 +199,7 @@
       <div class="logo-mark">P</div>
       <div class="logo-text">
         <h1>Polymarket Paper Trader <span style="font-size:13px;color:var(--purple);font-weight:500;letter-spacing:0.1em;background:var(--purple)22;padding:3px 10px;border-radius:6px;margin-left:8px">V3</span></h1>
-        <div class="sub">2026-06-15 18:44:24 UTC · Cycle #741 · Started 2026-05-12</div>
+        <div class="sub">2026-06-15 22:24:12 UTC · Cycle #742 · Started 2026-05-12</div>
       </div>
     </div>
     <div class="live-pill">
@@ -404,7 +404,7 @@
     <div class="card" style="margin-bottom:14px">
         <div class="card-title">
             <div class="card-title-row">📜 Recently closed (with trajectory + exit reason)</div>
-            <span style="color:var(--text-mute);font-size:11px">last 2</span>
+            <span style="color:var(--text-mute);font-size:11px">last 1</span>
         </div>
         
     <div class="pos-card closed-card">
@@ -424,23 +424,6 @@
         <div class="exit-reason">Exit: <strong>z_revert</strong> — z reverted below 0.5σ — mean reversion completed</div>
         <div class="pos-chart-wrap"><canvas class="pos-chart" id="closedchart_1395171_1778857248" width="600" height="120"></canvas></div>
     </div>
-    <div class="pos-card closed-card">
-        <div class="pos-card-top">
-            <div class="pos-question">Will Munetaka Murakami hit the most home runs during the 2026 MLB regular season</div>
-            <div class="pos-pnl" style="color:#f85149;font-weight:600;font-size:15px">$-13.41</div>
-        </div>
-        <div class="pos-stats">
-            <div class="pos-stat"><span class="pos-stat-label">z entry</span><span class="pos-stat-val">-8.35σ</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Dir</span><span class="pos-stat-val" style="color:#3fb950">LONG</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Fill in→out</span><span class="pos-stat-val">0.191→0.120</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Held</span><span class="pos-stat-val">39.5h</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">CLV</span><span class="pos-stat-val">+0.00¢</span></div>
-            <div class="pos-stat"><span class="pos-stat-label">Fees</span><span class="pos-stat-val">$1.59</span></div>
-        </div>
-        <div class="spread-row" style="color:#d29922"><span>Spread cost:</span> entry mid 0.175→fill 0.191 (+1.6¢) · exit mid 0.145→fill 0.120 (-2.5¢)</div>
-        <div class="exit-reason">Exit: <strong>z_revert</strong> — z reverted below 0.5σ — mean reversion completed</div>
-        <div class="pos-chart-wrap"><canvas class="pos-chart" id="closedchart_2036580_1778842849" width="600" height="120"></canvas></div>
-    </div>
     </div>
 
   <!-- BOT HEALTH + LIFETIME STATS -->
@@ -456,6 +439,15 @@
             <tr><th>Time</th><th>Cycle</th><th class="num">Markets</th><th class="num">Signals</th><th class="num">Opened</th><th class="num">Closed</th><th>Filters</th></tr>
           </thead>
           <tbody>
+        <tr>
+            <td class="mono">06-15 22:24</td>
+            <td class="mono">#742</td>
+            <td class="mono num">10</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td class="mono num" style="color:#7d8590">0</td>
+            <td><span class="chip">no signal: 8</span> <span class="chip">z too low: 2</span></td>
+        </tr>
         <tr>
             <td class="mono">06-15 18:44</td>
             <td class="mono">#741</td>
@@ -626,15 +618,6 @@
             <td class="mono num" style="color:#7d8590">0</td>
             <td class="mono num" style="color:#7d8590">0</td>
             <td><span class="chip">no signal: 5</span> <span class="chip">z too low: 2</span></td>
-        </tr>
-        <tr>
-            <td class="mono">06-12 23:39</td>
-            <td class="mono">#722</td>
-            <td class="mono num">7</td>
-            <td class="mono num" style="color:#7d8590">0</td>
-            <td class="mono num" style="color:#7d8590">0</td>
-            <td class="mono num" style="color:#7d8590">0</td>
-            <td><span class="chip">no signal: 6</span> <span class="chip">z too low: 1</span></td>
         </tr></tbody>
         </table>
       </div>
@@ -643,12 +626,12 @@
     <div class="card">
       <div class="card-title">📊 Lifetime totals</div>
       <div style="display:grid;grid-template-columns:1fr;gap:12px;font-size:13px">
-        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Markets scanned</div><div class="mono" style="font-size:22px;font-weight:600">521,265</div></div>
+        <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Markets scanned</div><div class="mono" style="font-size:22px;font-weight:600">521,275</div></div>
         <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">z≥5 signals seen</div><div class="mono" style="font-size:22px;font-weight:600">2160</div></div>
         <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Conversion (signals → entries)</div><div class="mono" style="font-size:22px;font-weight:600">0.7%</div></div>
         <div><div style="color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:0.05em">Filter rejection split</div>
           <div style="margin-top:4px">
-            <span class="chip" style="margin:2px 4px 2px 0">no signal: <strong style="color:var(--text)">284,622</strong></span><span class="chip" style="margin:2px 4px 2px 0">z too low: <strong style="color:var(--text)">221,571</strong></span><span class="chip" style="margin:2px 4px 2px 0">no history: <strong style="color:var(--text)">12,912</strong></span><span class="chip" style="margin:2px 4px 2px 0">dte filter: <strong style="color:var(--text)">1,122</strong></span><span class="chip" style="margin:2px 4px 2px 0">price boundary: <strong style="color:var(--text)">807</strong></span><span class="chip" style="margin:2px 4px 2px 0">entry failed book: <strong style="color:var(--text)">215</strong></span>
+            <span class="chip" style="margin:2px 4px 2px 0">no signal: <strong style="color:var(--text)">284,630</strong></span><span class="chip" style="margin:2px 4px 2px 0">z too low: <strong style="color:var(--text)">221,573</strong></span><span class="chip" style="margin:2px 4px 2px 0">no history: <strong style="color:var(--text)">12,912</strong></span><span class="chip" style="margin:2px 4px 2px 0">dte filter: <strong style="color:var(--text)">1,122</strong></span><span class="chip" style="margin:2px 4px 2px 0">price boundary: <strong style="color:var(--text)">807</strong></span><span class="chip" style="margin:2px 4px 2px 0">entry failed book: <strong style="color:var(--text)">215</strong></span>
           </div>
         </div>
       </div>
@@ -924,7 +907,7 @@
 
   <footer>
     <div>Auto-refresh 60s · V3: z≥5 · dte≥30 · no stop-loss · max 48h hold · $30/trade</div>
-    <div>13 closed · 0 open · 741 cycles</div>
+    <div>13 closed · 0 open · 742 cycles</div>
   </footer>
 
 </div>
@@ -1106,7 +1089,7 @@ Object.keys(POSITION_CHARTS).forEach(mid => {
 });
 
 // ── Per-CLOSED-position charts with entry+exit markers ──
-const CLOSED_CHARTS = [{"id": "closedchart_1395171_1778857248", "bars": [{"t": 1778871609, "p": 0.247}, {"t": 1778875209, "p": 0.244}, {"t": 1778878812, "p": 0.2485}, {"t": 1778882408, "p": 0.2475}, {"t": 1778886010, "p": 0.242}, {"t": 1778889619, "p": 0.239}, {"t": 1778893211, "p": 0.2155}, {"t": 1778896807, "p": 0.2155}, {"t": 1778900423, "p": 0.2145}], "entry_ts": 1778736796, "exit_ts": 1778857248, "entry_price": 0.18481418581418574, "exit_price": 0.25806632790637757, "entry_mid": 0.1965, "exit_mid": 0.237, "direction": -1, "pnl": -3.377279927838366}, {"id": "closedchart_2036580_1778842849", "bars": [{"t": 1778871610, "p": 0.14}, {"t": 1778875210, "p": 0.14}, {"t": 1778878813, "p": 0.14}, {"t": 1778882408, "p": 0.14}, {"t": 1778886010, "p": 0.14}], "entry_ts": 1778700799, "exit_ts": 1778842849, "entry_price": 0.19148820326678764, "exit_price": 0.1199999999999999, "entry_mid": 0.175, "exit_mid": 0.145, "direction": 1, "pnl": -13.408425117059906}];
+const CLOSED_CHARTS = [{"id": "closedchart_1395171_1778857248", "bars": [{"t": 1778886010, "p": 0.242}, {"t": 1778889619, "p": 0.239}, {"t": 1778893211, "p": 0.2155}, {"t": 1778896807, "p": 0.2155}, {"t": 1778900423, "p": 0.2145}], "entry_ts": 1778736796, "exit_ts": 1778857248, "entry_price": 0.18481418581418574, "exit_price": 0.25806632790637757, "entry_mid": 0.1965, "exit_mid": 0.237, "direction": -1, "pnl": -3.377279927838366}];
 CLOSED_CHARTS.forEach(d => {
     const el = document.getElementById(d.id);
     if (!el || !d.bars || d.bars.length < 2) return;
